@@ -27,6 +27,19 @@ import com.google.common.collect.Lists;
  * Excel导入导出工具 <br>
  * Maven依赖:
  * <pre>
+	需要手动添加的依赖包:
+	&lt;dependency>
+		&lt;groupId>javax&lt;/groupId>
+		&lt;artifactId>javaee-api&lt;/artifactId>
+		&lt;version>7.0&lt;/version>
+	&lt;/dependency>
+	&lt;dependency>
+		&lt;groupId>javax.servlet&lt;/groupId>
+		&lt;artifactId>javax.servlet-api&lt;/artifactId>
+		&lt;version>3.1.0&lt;/version>
+	&lt;/dependency>
+	
+ 	已经集成的依赖包:
 	&lt;dependency>
 		&lt;groupId>org.apache.poi&lt;/groupId>
 		&lt;artifactId>poi-ooxml&lt;/artifactId>
@@ -44,12 +57,6 @@ import com.google.common.collect.Lists;
 	    &lt;artifactId>commons-beanutils&lt;/artifactId>
 	    &lt;version>1.9.3&lt;/version>
 	&lt;/dependency>
-	
-	&lt;dependency>
-		&lt;groupId>javax&lt;/groupId>
-		&lt;artifactId>javaee-api&lt;/artifactId>
-		&lt;version>7.0&lt;/version>
-	&lt;/dependency>
  * </pre>
  * @author wuwz
  */
@@ -58,27 +65,29 @@ public class ExcelKit {
 	private Class<?> _class;
 	
 	public HttpServletResponse _response;
-	/**
-	 * 默认以此值填充空单元格
-	 */
+	/**默认以此值填充空单元格**/
 	public String _emptyCellValue = "EMPTY_CELL_VALUE";
 	
 	private ExcelKit() {}
+	private ExcelKit(Class<?> _class) {
+		this(_class, null);
+	}
 	private ExcelKit(Class<?> _class,HttpServletResponse response) {
 		this._response = response;
 		this._class = _class;
 	}
 	
-	/**
-	 * 用于导出
-	 */
+	/**用于生成本地文件**/
+	public static ExcelKit $Builder(Class<?> _class) {
+		return new ExcelKit(_class);
+	}
+	
+	/**用于浏览器导出**/
 	public static ExcelKit $Export(Class<?> _class,HttpServletResponse response) {
 		return new ExcelKit(_class,response);
 	}
 	
-	/**
-	 * 用于导入
-	 */
+	/**用于导入数据解析**/
 	public static ExcelKit $Import() {
 		return new ExcelKit();
 	}
@@ -93,7 +102,7 @@ public class ExcelKit {
 	 */
 	public boolean toExcel(List<?> data,String sheetName) {
 		if(_response == null) {
-			throw new RuntimeException("请先初始化  HttpServletResponse 对象!");
+			throw new RuntimeException("请先初始化  HttpServletResponse 对象! (通过调用 $Export(Class<?> _class,HttpServletResponse response))");
 		}
 		try {
 			return toExcel(data, sheetName, _response.getOutputStream());
@@ -144,8 +153,7 @@ public class ExcelKit {
 			OutputStream out) {
 		
 		if (data == null || data.size() < 1) {
-			System.out.println("没有数据可以导出。");
-			return false;
+			System.out.println("没有检测到导出数据，将生成 Excel导入模版。");
 		}
 		
 		// 导出列查询。
@@ -180,27 +188,30 @@ public class ExcelKit {
 		}
 
 		// 产生数据行
-		for (int i = 0; i < data.size(); i++) {
+		if(data != null && data.size() > 0) {
+			
+			for (int i = 0; i < data.size(); i++) {
 
-			Row body = sheet.createRow(i + 1);
+				Row body = sheet.createRow(i + 1);
 
-			for (int j = 0; j < exportItems.size(); j++) {
-				ExportItem exportItem = exportItems.get(j);
-				sheet.setColumnWidth(j, (short) (exportItem.getWidth() * 35.7));
-				Cell cell = body.createCell(j);
-				if (exportItem.getIsExportData()) {
-					try {
-						cell.setCellValue(BeanUtils.getProperty(data.get(i), exportItem.getField()));
-					} catch (Exception e) {
-						e.printStackTrace();
+				for (int j = 0; j < exportItems.size(); j++) {
+					ExportItem exportItem = exportItems.get(j);
+					sheet.setColumnWidth(j, (short) (exportItem.getWidth() * 35.7));
+					Cell cell = body.createCell(j);
+					if (exportItem.getIsExportData()) {
+						try {
+							cell.setCellValue(BeanUtils.getProperty(data.get(i), exportItem.getField()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						cell.setCellValue("******");
 					}
-				} else {
-					cell.setCellValue("******");
-				}
 
-				CellStyle style = handler.getBodyCellStyle(wb);
-				if (style != null) {
-					cell.setCellStyle(style);
+					CellStyle style = handler.getBodyCellStyle(wb);
+					if (style != null) {
+						cell.setCellStyle(style);
+					}
 				}
 			}
 		}
@@ -219,7 +230,7 @@ public class ExcelKit {
 			}
 			wb.write(out);
 			out.flush();
-			System.out.println("toExcel is success!");
+			System.out.println(String.format("======处理完成,共生成数据:%s行 (不包含表头).", data != null ? data.size() : 0));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
