@@ -8,7 +8,7 @@
  1. 引入Maven依赖：
  
 
-        <dependency> <!--jar暂时还未上传到中央仓库,请手动将/target/ExcelKit-1.0.jar文件写入本地仓库使用-->
+        <dependency> <!--jar包暂时还未上传到中央仓库,请手动将/target/ExcelKit-1.0.jar文件写入本地仓库使用-->
 			<groupId>org.wuwz</groupId>
 			<artifactId>ExcelKit</artifactId>
 			<version>1.0</version>
