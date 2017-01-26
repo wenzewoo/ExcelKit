@@ -6,10 +6,11 @@
 
 # 如何使用？
 
- 1. 引入Maven依赖：
+
+ 1. 引入Maven依赖或下载jar包([点我下载ExcelKit-0.1.jar][2])
  
 
-        <dependency> <!--jar包暂时还未上传到中央仓库,请手动将/target/ExcelKit-1.0.jar文件写入本地仓库使用-->
+        <dependency> <!--jar包暂时还未上传到中央仓库,请手动下载jar文件写入本地仓库使用-->
 			<groupId>org.wuwz</groupId>
 			<artifactId>ExcelKit</artifactId>
 			<version>1.0</version>
@@ -106,4 +107,7 @@
 		
 		
 		
+
+
   [1]: https://github.com/wuwz/ExcelKit-Example
+  [2]: https://github.com/wuwz/ExcelKit/blob/master/target/ExcelKit-1.0.jar?raw=true
