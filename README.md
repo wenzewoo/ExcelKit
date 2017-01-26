@@ -57,7 +57,7 @@
 		ExcelKit.$Export(User.class, response).toExcel(users, "用户信息");
 		
  3. 导出效果预览：
-	![image](https://github.com/wuwz/ExcelKit/blob/master/example.png)
+	![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
 	
 
 # 其他使用例子
