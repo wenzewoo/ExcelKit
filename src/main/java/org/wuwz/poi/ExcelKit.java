@@ -329,11 +329,6 @@ public class ExcelKit {
 	}
 }
 
-enum ExcelType {
-
-	EXCEL2003,EXCEL2007;
-}
-
 class ExportItem {
 
 	private String field; // 属性名
