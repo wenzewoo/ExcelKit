@@ -243,8 +243,8 @@ public class ExcelKit {
 	 * @param excelFile
 	 * @return
 	 */
-	public List<List<String>> readExcel(File excelFile) {
-		return readExcel(excelFile, 0, 1, -1, 0, -1);
+	public void readExcel(File excelFile,OnReadDataHandler handler) {
+		readExcel(excelFile, handler, 0, 1, -1, 0, -1);
 	}
 	
 	/**
@@ -257,8 +257,7 @@ public class ExcelKit {
 	 * @param endCellIndex 结束列索引,-1为所有
 	 * @return
 	 */
-	public List<List<String>> readExcel(File excelFile,int sheetIndex,int startRowIndex,int endRowIndex,int startCellIndex, int endCellIndex) {
-		List<List<String>> datas = Lists.newArrayList();
+	public void readExcel(File excelFile,OnReadDataHandler handler,int sheetIndex,int startRowIndex,int endRowIndex,int startCellIndex, int endCellIndex) {
 		Workbook wb = createWorkbook(excelFile);
 		
 		if(wb != null) {
@@ -284,11 +283,13 @@ public class ExcelKit {
 							rowData.add(cell != null ? cell.getStringCellValue() : _emptyCellValue);
 						}
 					}
-					datas.add(rowData);
+					if(rowData.size() > 0) {
+						// 处理当前行数据
+						handler.handler(rowData);
+					}
 				}
 			}
 		}
-		return datas;
 	}
 
 	public Workbook createWorkbook(File file) {
@@ -415,22 +416,4 @@ class ExportItem {
 
 	}
 
-}
-
-interface OnSettingHanlder {
-
-	/**
-	 * 设置表头样式
-	 */
-	CellStyle getHeadCellStyle(Workbook wb);
-
-	/**
-	 * 设置单元格样式
-	 */
-	CellStyle getBodyCellStyle(Workbook wb);
-	
-	/**
-	 * 设置导出的文件名（无需处理后缀）
-	 */
-	String getExportFileName(String sheetName);
 }

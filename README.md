@@ -66,20 +66,25 @@
 
     	List<User> users = Lists.newArrayList();
 		
+		final List<User> users = Lists.newArrayList();
+		
 		//导入数据。
 		File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
-		List<List<String>> excelDatas = ExcelKit.$Import().readExcel(excelFile);
-		for (List<String> ed : excelDatas) {
+		ExcelKit.$Import().readExcel(excelFile, new OnReadDataHandler() {
 			
-			User u = new User();
-			u.setUid(Integer.valueOf(ed.get(0)));
-			u.setUsername(ed.get(1));
-			u.setPassword(ed.get(2));
-			u.setNickname(ed.get(3));
-			
-			u.setAge(18);
-			users.add(u);
-		}
+			@Override
+			public void handler(List<String> rowData) {
+				User u = new User();
+				u.setUid(Integer.valueOf(rowData.get(0)));
+				u.setUsername(rowData.get(1));
+				u.setPassword(rowData.get(2));
+				u.setNickname(rowData.get(3));
+				
+				u.setAge(18);
+				users.add(u);
+				
+			}
+		});
 		
 		System.out.println(users);
 
