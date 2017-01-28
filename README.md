@@ -8,15 +8,15 @@
 
 
  1. 引入Maven依赖或下载jar包([点我下载ExcelKit-0.1.jar][2])
- 
 
-        <dependency> <!--jar包暂时还未上传到中央仓库,请手动下载jar文件写入本地仓库使用-->
+``` xml
+ 		<dependency> <!--jar包暂时还未上传到中央仓库,请手动下载jar文件写入本地仓库使用-->
 			<groupId>org.wuwz</groupId>
 			<artifactId>ExcelKit</artifactId>
 			<version>1.0</version>
 		</dependency>
 
-        <!--以下视情况而定-->
+        	<!--以下视情况而定-->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -27,11 +27,14 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+```
+
+       
 
  2. 导出项配置（通过注解）：
  
-
-        public class User {
+``` java
+	public class User {
 
         	@ExportConfig(value = "UID", width = 150)
         	private Integer uid;
@@ -49,10 +52,14 @@
         
         	// getter setter...
         }
+```
+
+
+        
 
  3. 一行代码导出：
- 
 
+``` java
 	@RequestMapping("/export");
 	public void export(HttpServletResponse response) {
 		List<User> users = dao.getUsers();
@@ -60,6 +67,8 @@
 		// 生成Excel并使用浏览器下载
 		ExcelKit.$Export(User.class, response).toExcel(users, "用户信息");
 	}
+```
+
 		
  3. 导出效果预览：
 	![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
@@ -69,6 +78,9 @@
 
  1. 导入Excel读取数据：
 
+	
+
+``` java
 	final List<User> users = Lists.newArrayList();
 	
 	//导入数据。
@@ -90,12 +102,17 @@
 	});
 	
 	System.out.println(users);
+```
+
 
  
 
  2. 生成Excel文件到本地、生成导入模版文件：
  
 
+	
+
+``` java
 	// 生成本地文件
 	File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
 	ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(excelFile));
@@ -104,6 +121,8 @@
 	users.clear();
 	File templateFile = new File("C:\\Users\\Administrator\\Desktop\\import_template.xlsx");
 	ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(templateFile));
+```
+
 		
 		
 		
