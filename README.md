@@ -53,10 +53,13 @@
  3. 一行代码导出：
  
 
+	@RequestMapping("/export");
+	public void export(HttpServletResponse response) {
 		List<User> users = dao.getUsers();
 		
 		// 生成Excel并使用浏览器下载
 		ExcelKit.$Export(User.class, response).toExcel(users, "用户信息");
+	}
 		
  3. 导出效果预览：
 	![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
@@ -66,43 +69,41 @@
 
  1. 导入Excel读取数据：
 
-    	List<User> users = Lists.newArrayList();
+	final List<User> users = Lists.newArrayList();
+	
+	//导入数据。
+	File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
+	ExcelKit.$Import().readExcel(excelFile, new OnReadDataHandler() {
 		
-		final List<User> users = Lists.newArrayList();
-		
-		//导入数据。
-		File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
-		ExcelKit.$Import().readExcel(excelFile, new OnReadDataHandler() {
+		@Override
+		public void handler(List<String> rowData) {
+			User u = new User();
+			u.setUid(Integer.valueOf(rowData.get(0)));
+			u.setUsername(rowData.get(1));
+			u.setPassword(rowData.get(2));
+			u.setNickname(rowData.get(3));
 			
-			@Override
-			public void handler(List<String> rowData) {
-				User u = new User();
-				u.setUid(Integer.valueOf(rowData.get(0)));
-				u.setUsername(rowData.get(1));
-				u.setPassword(rowData.get(2));
-				u.setNickname(rowData.get(3));
-				
-				u.setAge(18);
-				users.add(u);
-				
-			}
-		});
-		
-		System.out.println(users);
+			u.setAge(18);
+			users.add(u);
+			
+		}
+	});
+	
+	System.out.println(users);
 
  
 
  2. 生成Excel文件到本地、生成导入模版文件：
  
 
-        // 生成本地文件
-		File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
-		ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(excelFile));
-		
-		// 生成Excel导入模版文件。
-		users.clear();
-		File templateFile = new File("C:\\Users\\Administrator\\Desktop\\import_template.xlsx");
-		ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(templateFile));
+	// 生成本地文件
+	File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
+	ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(excelFile));
+	
+	// 生成Excel导入模版文件。
+	users.clear();
+	File templateFile = new File("C:\\Users\\Administrator\\Desktop\\import_template.xlsx");
+	ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(templateFile));
 		
 		
 		
