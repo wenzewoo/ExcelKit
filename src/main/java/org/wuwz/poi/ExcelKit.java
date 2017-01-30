@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -61,9 +62,9 @@ import com.google.common.collect.Lists;
  * @author wuwz
  */
 public class ExcelKit {
+	private static Logger log = Logger.getLogger(ExcelKit.class);
 	
 	private Class<?> _class;
-	
 	public HttpServletResponse _response;
 	/**默认以此值填充空单元格**/
 	public String _emptyCellValue = "EMPTY_CELL_VALUE";
@@ -151,9 +152,11 @@ public class ExcelKit {
 
 	public boolean toExcel(List<?> data, String sheetName, ExcelType type, OnSettingHanlder handler,
 			OutputStream out) {
+		long begin = System.currentTimeMillis();
 		
 		if (data == null || data.size() < 1) {
-			System.out.println("没有检测到导出数据，将生成 Excel导入模版。");
+			if(log.isDebugEnabled())
+				log.debug("没有检测到导出数据，将生成 Excel导入模版。");
 		}
 		
 		// 导出列查询。
@@ -162,9 +165,14 @@ public class ExcelKit {
 
 			ExportConfig ec = field.getAnnotation(ExportConfig.class);
 			if (ec != null) {
-				exportItems.add(new ExportItem.Builder().setField(field.getName())
+				exportItems.add(
+					new ExportItem.Builder()
+						.setField(field.getName())
 						.setDisplay("field".equals(ec.value()) ? field.getName() : ec.value())
-						.setIsExportData(ec.isExportData()).setWidth(ec.width()).create());
+						.setIsExportData(ec.isExportData())
+						.setWidth(ec.width())
+						.create()
+				);
 			}
 		}
 
@@ -230,7 +238,11 @@ public class ExcelKit {
 			}
 			wb.write(out);
 			out.flush();
-			System.out.println(String.format("======处理完成,共生成数据:%s行 (不包含表头).", data != null ? data.size() : 0));
+			out.close();
+			
+			log.info(String.format("Excel处理完成,共生成数据:%s行 (不包含表头),耗时：%s seconds.", 
+					(data != null ? data.size() : 0),
+					(System.currentTimeMillis() - begin) / 1000F));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -258,6 +270,8 @@ public class ExcelKit {
 	 * @return
 	 */
 	public void readExcel(File excelFile,OnReadDataHandler handler,int sheetIndex,int startRowIndex,int endRowIndex,int startCellIndex, int endCellIndex) {
+		long totalRows = 0l;
+		long begin = System.currentTimeMillis();
 		Workbook wb = createWorkbook(excelFile);
 		
 		if(wb != null) {
@@ -285,11 +299,13 @@ public class ExcelKit {
 					}
 					if(rowData.size() > 0) {
 						// 处理当前行数据
-						handler.handler(rowData);
+						handler.handler(rowData); 
+						totalRows++;
 					}
 				}
 			}
 		}
+		log.info(String.format("Excel数据读取并处理完成,共读取数据：%s行,耗时：%s seconds.", totalRows,(System.currentTimeMillis() - begin) / 1000F));
 	}
 
 	public Workbook createWorkbook(File file) {
