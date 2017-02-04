@@ -1,3 +1,32 @@
+/**
+
+ * Copyright (c) 2017, 吴汶泽 (wuwz@live.com).
+
+ *
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+
+ * you may not use this file except in compliance with the License.
+
+ * You may obtain a copy of the License at
+
+ *
+
+ *      http://www.apache.org/licenses/LICENSE-2.0
+
+ *
+
+ * Unless required by applicable law or agreed to in writing, software
+
+ * distributed under the License is distributed on an "AS IS" BASIS,
+
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+
+ * limitations under the License.
+
+ */
 package org.wuwz.poi;
 
 import java.io.File;
@@ -25,39 +54,23 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.google.common.collect.Lists;
 
 /**
- * Excel导入导出工具 <br>
- * Maven依赖:
+ * <h3>Excel导入导出工具 </h3>
+ * 已经集成的依赖包：poi-ooxml-3.8,commons-beanutils-1.9.3,guava-18.0 <br>
+ * <b>Examples:</b>
  * <pre>
-	需要手动添加的依赖包:
-	&lt;dependency>
-		&lt;groupId>javax&lt;/groupId>
-		&lt;artifactId>javaee-api&lt;/artifactId>
-		&lt;version>7.0&lt;/version>
-	&lt;/dependency>
-	&lt;dependency>
-		&lt;groupId>javax.servlet&lt;/groupId>
-		&lt;artifactId>javax.servlet-api&lt;/artifactId>
-		&lt;version>3.1.0&lt;/version>
-	&lt;/dependency>
-	
- 	已经集成的依赖包:
-	&lt;dependency>
-		&lt;groupId>org.apache.poi&lt;/groupId>
-		&lt;artifactId>poi-ooxml&lt;/artifactId>
-		&lt;version>3.8&lt;/version>
-	&lt;/dependency>
-	
-	&lt;dependency>
-	    &lt;groupId>com.google.guava&lt;/groupId>
-	    &lt;artifactId>guava&lt;/artifactId>
-	    &lt;version>18.0&lt;/version>
-	&lt;/dependency>
-
-	&lt;dependency>
-	    &lt;groupId>commons-beanutils&lt;/groupId>
-	    &lt;artifactId>commons-beanutils&lt;/artifactId>
-	    &lt;version>1.9.3&lt;/version>
-	&lt;/dependency>
+ * 1. 导出并使用浏览器下载：
+ * ExcelKit.$Export(entityClass,httpServletResponse).toExcel(dataList,"sheetName");
+ * 
+ * 2. 生成本地Excel文件：
+ * ExcelKit.$Builder(entityClass).toExcel(dataList,"sheetName",new FileOutputStream(excelFile));
+ * 
+ * 3. 读取Excel文件并解析：
+ * ExcelKit.$Import().readExcel(excelFile,new OnReadDataHandler() {
+ * 	
+ *  public void handler(List&lt;String&gt; rowData) {
+ *  	//rowData.get(0); rowData.get(1);...
+ *  }
+ * });
  * </pre>
  * @author wuwz
  */
@@ -66,7 +79,9 @@ public class ExcelKit {
 	
 	private Class<?> _class;
 	public HttpServletResponse _response;
-	/**默认以此值填充空单元格**/
+	/**
+	 * 默认以此值填充空单元格,可通过 setEmptyCellValue(string)改变其默认值。
+	 */
 	public String _emptyCellValue = "EMPTY_CELL_VALUE";
 	
 	private ExcelKit() {}
@@ -78,17 +93,29 @@ public class ExcelKit {
 		this._class = _class;
 	}
 	
-	/**用于生成本地文件**/
+	/**
+	 * 用于生成本地文件
+	 * @param _class 实体Class对象
+	 * @return ExcelKit
+	 */
 	public static ExcelKit $Builder(Class<?> _class) {
 		return new ExcelKit(_class);
 	}
 	
-	/**用于浏览器导出**/
+	/**
+	 * 用于浏览器导出
+	 * @param _class 实体Class对象
+	 * @param response 原生HttpServletResponse对象
+	 * @return ExcelKit
+	 */
 	public static ExcelKit $Export(Class<?> _class,HttpServletResponse response) {
 		return new ExcelKit(_class,response);
 	}
 	
-	/**用于导入数据解析**/
+	/**
+	 * 用于导入数据解析
+	 * @return ExcelKit
+	 */
 	public static ExcelKit $Import() {
 		return new ExcelKit();
 	}
@@ -99,7 +126,10 @@ public class ExcelKit {
 	}
 	
 	/**
-	 * 导出Excel
+	 * 导出Excel(此方式需依赖浏览器实现文件下载,故应先使用$Export()构造器)
+	 * @param data 数据集合
+	 * @param sheetName 工作表名字
+	 * @return true-操作成功,false-操作失败
 	 */
 	public boolean toExcel(List<?> data,String sheetName) {
 		if(_response == null) {
@@ -113,6 +143,13 @@ public class ExcelKit {
 		return false;
 	}
 
+	/**
+	 * 针对转换方法的默认实现,默认为Excel2007文件。
+	 * @param data 数据集合
+	 * @param sheetName 工作表名字
+	 * @param out 输出流
+	 * @return true-操作成功,false-操作失败
+	 */
 	public boolean toExcel(List<?> data, String sheetName, OutputStream out) {
 
 		return toExcel(data, sheetName, ExcelType.EXCEL2007, new OnSettingHanlder() {
@@ -252,22 +289,31 @@ public class ExcelKit {
 	
 	/**
 	 * 读取Excel数据(默认读取第一个工作表的所有数据,排除表头)
-	 * @param excelFile
-	 * @return
+	 * @param excelFile Excel文件(本地)
 	 */
 	public void readExcel(File excelFile,OnReadDataHandler handler) {
-		readExcel(excelFile, handler, 0, 1, -1, 0, -1);
+		readExcel(excelFile, 0, handler);
+	}
+	
+	/**
+	 * 读取指定sheetIndex的数据（排除表头）
+	 * @param excelFile Excel文件(本地)
+	 * @param sheetIndex 工作表索引
+	 * @param handler 行数据处理回调
+	 */
+	public void readExcel(File excelFile,int sheetIndex,OnReadDataHandler handler) {
+		readExcel(excelFile, handler, sheetIndex, 1, -1, 0, -1);
 	}
 	
 	/**
 	 * 读取Excel数据
-	 * @param excelFile
+	 * @param excelFile Excel文件(本地)
+	 * @param handler 行数据处理回调
 	 * @param sheetIndex 工作表索引
 	 * @param startRowIndex 开始行索引
 	 * @param endRowIndex 结束行索引,-1为所有
 	 * @param startCellIndex 开始列索引
 	 * @param endCellIndex 结束列索引,-1为所有
-	 * @return
 	 */
 	public void readExcel(File excelFile,OnReadDataHandler handler,int sheetIndex,int startRowIndex,int endRowIndex,int startCellIndex, int endCellIndex) {
 		long totalRows = 0l;
