@@ -136,4 +136,4 @@
 
 
   [1]: https://github.com/wuwz/ExcelKit-Example
-  [2]: https://github.com/wuwz/ExcelKit/blob/master/target/ExcelKit-1.0.jar?raw=true
+  [2]: https://github.com/wuwz/ExcelKit/blob/master/ExcelKit-1.0.jar?raw=true
