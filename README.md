@@ -7,8 +7,8 @@
 # 如何使用？
 
 
- 1. 引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
-	 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
+1. 引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
+> 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
 
 ``` xml
  		<dependency> <!--jar包暂时还未上传到中央仓库,请手动下载jar文件写入本地仓库使用-->
@@ -37,7 +37,7 @@
 
        
 
- 2. 导出项配置（通过注解）：
+2. 导出项配置（通过注解）：
  
 ``` java
 	public class User {
@@ -63,7 +63,7 @@
 
         
 
- 3. 一行代码导出：
+3. 一行代码导出：
 
 ``` java
 	@RequestMapping("/export");
@@ -76,13 +76,13 @@
 ```
 
 		
- 3. 导出效果预览：
+4. 导出效果预览：
 	![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
 	
 
 # 其他使用例子
 
- 1. 导入Excel读取数据：
+1. 导入Excel读取数据：
 
 	
 
@@ -113,7 +113,7 @@
 
  
 
- 2. 生成Excel文件到本地、生成导入模版文件：
+2. 生成Excel文件到本地、生成导入模版文件：
  
 
 	
