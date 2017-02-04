@@ -1,10 +1,13 @@
 # ExcelKit
 
 > 简单,好用且轻量级Excel文件导入导出工具。
-> ExcelKit-Example完整示例程序 ([https://github.com/wuwz/ExcelKit-Example][1])
 
 # 编译环境
-> 使用jdk1.6.0_45和maven-3.2.5进行项目构建,理论上支持jdk6+。
+> 使用``` jdk1.6.0_45 ``` 和```maven-3.2.5```进行项目构建,理论上支持```jdk6+```。
+
+# 使用效果：
+> ExcelKit-Example完整示例程序 ([https://github.com/wuwz/ExcelKit-Example][1])
+![image](https://raw.githubusercontent.com/wuwz/ExcelKit-Example/master/example.gif)
 
 # 如何使用？
 
@@ -14,7 +17,7 @@
 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
 
 ``` xml
-     	<dependency>
+         <dependency>
 			<groupId>org.wuwz</groupId>
 			<artifactId>ExcelKit</artifactId>
 			<version>1.0</version>
@@ -80,7 +83,7 @@
 ![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
 	
 
-# 其他使用例子
+# 常用例子：
 
 1.导入Excel读取数据：
 
@@ -130,6 +133,94 @@
 ```
 
 		
+        
+# 其他例子（所有）
+
+> 本示例只做参考,可能不能直接运行（需要数据支持）。
+
+``` java
+
+    File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
+	
+	//1. 生成本地文件
+	ExcelKit.$Builder(User.class).toExcel(Db.getUsers(), "用户信息", new FileOutputStream(excelFile));
+	
+	//2. 文件导入模版
+	ExcelKit.$Builder(User.class).toExcel(null, "用户信息", new FileOutputStream(excelFile));
+	
+	
+	//3. 自定义Excel文件生成/导出(ExcelKit.$Export(class,response))
+	ExcelKit.$Builder(User.class).toExcel(Db.getUsers(), "用户信息", ExcelType.EXCEL2007, new OnSettingHanlder() {
+		
+		@Override
+		public CellStyle getHeadCellStyle(Workbook wb) {
+			// 设置表头样式
+			CellStyle cellStyle = wb.createCellStyle();
+			Font font = wb.createFont();
+			cellStyle.setAlignment(CellStyle.ALIGN_LEFT);// 对齐
+			cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+			cellStyle.setFillBackgroundColor(HSSFColor.GREEN.index);
+			font.setBoldweight(Font.BOLDWEIGHT_NORMAL);
+			font.setFontHeightInPoints((short) 14);// 字体大小
+			font.setColor(HSSFColor.WHITE.index);
+			cellStyle.setFont(font);
+			//......
+			return cellStyle;
+		}
+		
+		@Override
+		public String getExportFileName(String sheetName) {
+			// 设置导出文件名
+			return String.format("导出-%s-%s", sheetName,System.currentTimeMillis());
+		}
+		
+		@Override
+		public CellStyle getBodyCellStyle(Workbook wb) {
+			return null;
+		}
+	}, new FileOutputStream(excelFile));
+	
+	
+	//4. 读取指定sheetIndex
+	ExcelKit.$Import().readExcel(excelFile, 0, new OnReadDataHandler() {
+		
+		@Override
+		public void handler(List<String> rowData) {
+			
+		}
+	});
+	
+	//5. 设置空单元格值,默认为：“EMPTY_CELL_VALUE”
+	final String emptyValue = "null";
+	ExcelKit.$Import().setEmptyCellValue(emptyValue).readExcel(excelFile, new OnReadDataHandler() {
+		
+		@Override
+		public void handler(List<String> rowData) {
+			if(emptyValue.equals(rowData.get(0))) {
+				//此单元格的值为空,需要额外处理
+			}
+		}
+	});
+	
+	
+	//6. 读取指定sheet、行、单元格
+	int sheetIndex = 0;
+	int startRowIndex = 0;
+	int endRowIndex = 9;
+	int startCellIndex = 0;
+	int endCellIndex = 3;
+	ExcelKit.$Import().readExcel(excelFile, new OnReadDataHandler() {
+		
+		@Override
+		public void handler(List<String> rowData) {
+			// TODO Auto-generated method stub
+			
+		}
+	}, sheetIndex, startRowIndex, endRowIndex, startCellIndex, endCellIndex);
+	
+	
+	//.....
+```
 		
 		
 		
