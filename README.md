@@ -1,13 +1,16 @@
 # ExcelKit
 
 > 简单,好用且轻量级Excel文件导入导出工具。
-
 > ExcelKit-Example完整示例程序 ([https://github.com/wuwz/ExcelKit-Example][1])
+
+# 编译环境
+1.jdk1.6.0_45,理论上支持jdk6+。
+2.maven-3.2.5
 
 # 如何使用？
 
 
-   1. 引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
+1.引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
 
 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
 
@@ -17,28 +20,24 @@
 			<artifactId>ExcelKit</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
+		
+
+        <!--以下视情况而定-->
+        <dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.9</version>
 		</dependency>
-
-        	<!--以下视情况而定-->
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
-		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<version>3.0.1</version>
 		</dependency>
 ```
 
        
 
-    2. 导出项配置（通过注解）：
+2.导出项配置（通过注解）：
  
 ``` java
 	public class User {
@@ -64,7 +63,7 @@
 
         
 
-    3. 一行代码导出：
+3.一行代码执行浏览器导出：
 
 ``` java
 	@RequestMapping("/export");
@@ -84,7 +83,7 @@
 
 # 其他使用例子
 
-    1. 导入Excel读取数据：
+1.导入Excel读取数据：
 
 	
 
@@ -115,7 +114,7 @@
 
  
 
-    2. 生成Excel文件到本地、生成导入模版文件：
+2.生成Excel文件到本地、生成导入模版文件：
  
 
 	

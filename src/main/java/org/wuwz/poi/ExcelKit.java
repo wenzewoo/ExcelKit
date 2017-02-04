@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,11 +52,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.google.common.collect.Lists;
-
 /**
  * <h3>Excel导入导出工具 </h3>
- * 已经集成的依赖包：poi-ooxml-3.8,commons-beanutils-1.9.3,guava-18.0 <br>
+ * 已经集成的依赖包：poi-ooxml-3.8,commons-beanutils-1.9.3 <br>
  * <b>Examples:</b>
  * <pre>
  * 1. 导出并使用浏览器下载：
@@ -197,7 +196,7 @@ public class ExcelKit {
 		}
 		
 		// 导出列查询。
-		List<ExportItem> exportItems = Lists.newArrayList();
+		List<ExportItem> exportItems = new ArrayList<ExportItem>();
 		for (Field field : _class.getDeclaredFields()) {
 
 			ExportConfig ec = field.getAnnotation(ExportConfig.class);
@@ -333,7 +332,7 @@ public class ExcelKit {
 				}
 				
 				for (int i = startRowIndex; i < endRowIndex; i++) {
-					List<String> rowData = Lists.newArrayList();
+					List<String> rowData = new ArrayList<String>();
 					Row row = sheet.getRow(i);
 					if(row != null) {
 						
