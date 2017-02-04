@@ -4,8 +4,7 @@
 > ExcelKit-Example完整示例程序 ([https://github.com/wuwz/ExcelKit-Example][1])
 
 # 编译环境
-1.jdk1.6.0_45,理论上支持jdk6+。
-2.maven-3.2.5
+> 使用jdk1.6.0_45和maven-3.2.5进行项目构建,理论上支持jdk6+。
 
 # 如何使用？
 
@@ -76,7 +75,7 @@
 ```
 
 		
-    4. 导出效果预览：
+4.导出效果预览：
     
 ![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
 	
