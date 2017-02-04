@@ -7,7 +7,8 @@
 # 如何使用？
 
 
- 1. 引入Maven依赖或下载jar包([点我下载ExcelKit-0.1.jar][2])
+ 1. 引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
+	 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
 
 ``` xml
  		<dependency> <!--jar包暂时还未上传到中央仓库,请手动下载jar文件写入本地仓库使用-->
