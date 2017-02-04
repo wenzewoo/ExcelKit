@@ -7,7 +7,7 @@
 # 如何使用？
 
 
-    1. 引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
+   1. 引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
 
 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
 
@@ -78,7 +78,8 @@
 
 		
     4. 导出效果预览：
-	![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
+    
+![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example.png)
 	
 
 # 其他使用例子
