@@ -341,8 +341,11 @@ public class ExcelKit {
 							if(cell != null) {
 								// 统一以字符串的方式获取
 								cell.setCellType(Cell.CELL_TYPE_STRING);
+								rowData.add(cell.getStringCellValue());
+							} else {
+								rowData.add(_emptyCellValue);
 							}
-							rowData.add(cell != null ? cell.getStringCellValue() : _emptyCellValue);
+//							rowData.add(cell != null ? cell.getStringCellValue() : _emptyCellValue);
 						}
 					}
 					if(rowData.size() > 0) {
