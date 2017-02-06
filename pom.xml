@@ -4,7 +4,7 @@
 
 	<groupId>org.wuwz</groupId>
 	<artifactId>ExcelKit</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 	<name>ExcelKit</name>
 	<url>http://github.com/wuwz/ExcelKit</url>

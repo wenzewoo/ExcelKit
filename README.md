@@ -12,7 +12,7 @@
 # 如何使用？
 
 
-1.引入Maven依赖或下载jar包([点我下载ExcelKit-1.0.jar][2])
+1.引入Maven依赖或下载jar包([点我下载ExcelKit-1.1.jar][2])
 
 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
 
@@ -20,7 +20,7 @@
          <dependency>
 			<groupId>org.wuwz</groupId>
 			<artifactId>ExcelKit</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 		</dependency>
 		
 
@@ -225,4 +225,4 @@
 
 
   [1]: https://github.com/wuwz/ExcelKit-Example
-  [2]: https://github.com/wuwz/ExcelKit/blob/master/ExcelKit-1.0.jar?raw=true
+  [2]: https://github.com/wuwz/ExcelKit/blob/master/ExcelKit-1.1.jar?raw=true
