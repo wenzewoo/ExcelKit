@@ -83,11 +83,11 @@ public class ExcelKit {
 	 */
 	public String _emptyCellValue = "EMPTY_CELL_VALUE";
 	
-	private ExcelKit() {}
-	private ExcelKit(Class<?> _class) {
+	protected ExcelKit() {}
+	protected ExcelKit(Class<?> _class) {
 		this(_class, null);
 	}
-	private ExcelKit(Class<?> _class,HttpServletResponse response) {
+	protected ExcelKit(Class<?> _class,HttpServletResponse response) {
 		this._response = response;
 		this._class = _class;
 	}
