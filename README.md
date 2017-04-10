@@ -1,26 +1,37 @@
 # ExcelKit
 
-> 简单,好用且轻量级Excel文件导入导出工具。
+> 简单、好用且轻量级的海量Excel文件导入导出解决方案。
+
+### 注意：从2.0开始,进行了代码重构,不再兼容1.x
+
+#### 重构内容：
+1. @ExportConfig重构,支持convert转换器.
+2. Excel读取性能优化,由usermodel包下的API重构为eventusermode包下的API,以SAX的方式,边读边处理,性能得到了极大的提升,可轻松实现百万级别的海量数据处理.
+3. 写Excel文件的API重构为streaming包下的API，同时支持多sheet导出.
+4. 取消了对Excel2003以及以下版本的excel文件支持.
+5. 包结构重构,便于以后的版本扩展和升级,不再兼容1.x版本.
+
 
 # 编译环境：
 > 使用``` jdk1.6.0_45 ``` 和```maven-3.2.5```进行项目构建,理论上支持```jdk6+```。
 
 # 使用效果：
 > ExcelKit-Example完整示例程序 ([https://github.com/wuwz/ExcelKit-Example][1])
+
 ![image](https://raw.githubusercontent.com/wuwz/ExcelKit-Example/master/example.gif)
 
 # 如何使用？
 
 
-1.引入Maven依赖或下载jar包([点我下载ExcelKit-1.1.jar][2])
+1.引入Maven依赖或下载jar包([下载最新版jar包][2])
 
-> 使用本工具无需关注poi依赖问题（只需引入以下相关jar包),完整的依赖说明见  ``` org.wuwz.poi.ExcelKit ``` 类注释。
+> 使用本工具无需关注poi依赖问题（只需引入以下相关jar包)。
 
 ``` xml
          <dependency>
-			<groupId>org.wuwz</groupId>
+    		<groupId>org.wuwz</groupId>
 			<artifactId>ExcelKit</artifactId>
-			<version>1.1</version>
+			<version>2.0</version>
 		</dependency>
 		
 
@@ -37,6 +48,15 @@
 		</dependency>
 ```
 
+> ExcelKit集成的jar:
+``` xml
+	<poi-version>3.8</poi-version>
+	<beanutils-version>1.9.3</beanutils-version>
+	<dom4j-version>1.6.1</dom4j-version>
+	<jaxen-version>1.1.6</jaxen-version>
+	<xerces-version>2.11.0</xerces-version>
+```
+
        
 
 2.导出项配置（通过注解）：
@@ -44,24 +64,56 @@
 ``` java
 	public class User {
 
-        	@ExportConfig(value = "UID", width = 150)
-        	private Integer uid;
-        
-        	@ExportConfig(value = "用户名", width = 200)
-        	private String username;
-        
-        	@ExportConfig(value = "密码(不可见)", width = 120, isExportData = false)
-        	private String password;
-        
-        	@ExportConfig(value = "昵称", width = 200)
-        	private String nickname;
-        
-        	private Integer age;
+    		@ExportConfig("UID")
+		private Integer uid;
+	
+		@ExportConfig("用户名")
+		private String username;
+	
+		@ExportConfig(value = "密码", replace = "******", color = HSSFColor.RED.index)
+		private String password;
+	
+		@ExportConfig(value = "性别", width = 50, convert = "s:1=男,2=女")
+		private Integer sex;
+	
+		@ExportConfig(value = "年级", convert = "c:org.wuwz.poi.test.GradeIdConvert")
+		private Integer gradeId;
         
         	// getter setter...
         }
 ```
 
+2.1.实现ExportConvert（如果配置了convert属性,参考gradeId字段）：
+
+> convert属性说明:
+
+将单元格值进行转换后再导出：
+目前支持以下几种场景：
+1. 固定的数值转换为字符串值（如：1代表男，2代表女）
+	表达式: ```"s:1=男,2=女"```
+	
+2. 数值对应的值需要查询数据库才能进行映射(实现org.wuwz.poi.convert.ExportConvert接口)
+	表达式: ```"c:org.wuwz.poi.test.GradeIdConvert"```
+
+``` java
+	public class GradeIdConvert implements ExportConvert {
+		
+		static Map<Integer, String> records;
+		static {
+			//默认数据库字典查询 select * from tb_grades
+			records = new HashMap<Integer, String>();
+			records.put(1, "一年级学生");
+			records.put(2, "二年级学生");
+			records.put(3, "三年级学生");
+		}
+	
+		@Override
+		public String handler(Integer val) {
+			return records.get(val) != null ? records.get(val) : "无记录";
+		}
+	
+	}
+```
 
         
 
@@ -83,146 +135,49 @@
 
 # 常用例子：
 
-1.导入Excel读取数据：
+1.海量数据Excel文件读取（边读边处理）：
 
 	
 
 ``` java
-	final List<User> users = Lists.newArrayList();
-	
-	//导入数据。
-	File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
-	ExcelKit.$Import().readExcel(excelFile, new OnReadDataHandler() {
+	ExcelKit.$Import()
+		.setEmptyCellValue(null) // 设置空单元格的值,默认为null,可不设置
+		.readExcel(new File("c:/bigexcel.xlsx"), new ReadHandler() {
 		
 		@Override
-		public void handler(List<String> rowData) {
-			User u = new User();
-			u.setUid(Integer.valueOf(rowData.get(0)));
-			u.setUsername(rowData.get(1));
-			u.setPassword(rowData.get(2));
-			u.setNickname(rowData.get(3));
+		public void handler(int sheetIndex, int rowIndex, List<String> row) {
+			if(rowIndex == 0) return; //排除第一行..
 			
-			u.setAge(18);
-			users.add(u);
+			System.out.println("当前行："+rowIndex);
+			System.out.println("行数据："+row);
+			System.out.println();
 			
-		}
-	});
-	
-	System.out.println(users);
-```
-
-
- 
-
-2.生成Excel文件到本地、生成导入模版文件：
- 
-
-	
-
-``` java
-	// 生成本地文件
-	File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
-	ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(excelFile));
-	
-	// 生成Excel导入模版文件。
-	users.clear();
-	File templateFile = new File("C:\\Users\\Administrator\\Desktop\\import_template.xlsx");
-	ExcelKit.$Builder(User.class).toExcel(users, "用户信息", new FileOutputStream(templateFile));
-```
-
-		
-        
-# 其他例子（所有）：
-
-> 本示例只做参考,可能不能直接运行（需要数据支持）。
-
-``` java
-
-    File excelFile = new File("C:\\Users\\Administrator\\Desktop\\excel.xlsx");
-	
-	//1. 生成本地文件
-	ExcelKit.$Builder(User.class).toExcel(Db.getUsers(), "用户信息", new FileOutputStream(excelFile));
-	
-	//2. 文件导入模版
-	ExcelKit.$Builder(User.class).toExcel(null, "用户信息", new FileOutputStream(excelFile));
-	
-	
-	//3. 自定义Excel文件生成/导出(ExcelKit.$Export(class,response))
-	ExcelKit.$Builder(User.class).toExcel(Db.getUsers(), "用户信息", ExcelType.EXCEL2007, new OnSettingHanlder() {
-		
-		@Override
-		public CellStyle getHeadCellStyle(Workbook wb) {
-			// 设置表头样式
-			CellStyle cellStyle = wb.createCellStyle();
-			Font font = wb.createFont();
-			cellStyle.setAlignment(CellStyle.ALIGN_LEFT);// 对齐
-			cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
-			cellStyle.setFillBackgroundColor(HSSFColor.GREEN.index);
-			font.setBoldweight(Font.BOLDWEIGHT_NORMAL);
-			font.setFontHeightInPoints((short) 14);// 字体大小
-			font.setColor(HSSFColor.WHITE.index);
-			cellStyle.setFont(font);
-			//......
-			return cellStyle;
-		}
-		
-		@Override
-		public String getExportFileName(String sheetName) {
-			// 设置导出文件名
-			return String.format("导出-%s-%s", sheetName,System.currentTimeMillis());
-		}
-		
-		@Override
-		public CellStyle getBodyCellStyle(Workbook wb) {
-			return null;
-		}
-	}, new FileOutputStream(excelFile));
-	
-	
-	//4. 读取指定sheetIndex
-	ExcelKit.$Import().readExcel(excelFile, 0, new OnReadDataHandler() {
-		
-		@Override
-		public void handler(List<String> rowData) {
+			// 入库解析
+			if(row.get(0) != null) {
+				// UID...
+			} 
 			
-		}
-	});
-	
-	//5. 设置空单元格值,默认为：“EMPTY_CELL_VALUE”
-	final String emptyValue = "null";
-	ExcelKit.$Import().setEmptyCellValue(emptyValue).readExcel(excelFile, new OnReadDataHandler() {
-		
-		@Override
-		public void handler(List<String> rowData) {
-			if(emptyValue.equals(rowData.get(0))) {
-				//此单元格的值为空,需要额外处理
+			if(row.get(1) != null) {
+				// 用户名..
 			}
 		}
 	});
-	
-	
-	//6. 读取指定sheet、行、单元格
-	int sheetIndex = 0;
-	int startRowIndex = 0;
-	int endRowIndex = 9;
-	int startCellIndex = 0;
-	int endCellIndex = 3;
-	ExcelKit.$Import().readExcel(excelFile, new OnReadDataHandler() {
-		
-		@Override
-		public void handler(List<String> rowData) {
-			// TODO Auto-generated method stub
-			
-		}
-	}, sheetIndex, startRowIndex, endRowIndex, startCellIndex, endCellIndex);
-	
-	
-	//.....
 ```
-		
+
+
+ 
+
+2.生成Excel文件到本地：
+ 
+
+``` java
+	ExcelKit.$Builder(User.class)
+		.setMaxSheetRecords(10000) //设置每个sheet的最大记录数,默认为10000,可不设置
+		.toExcel(records, "用户数据", new FileOutputStream(new File("c:/test001.xlsx")));
+```
 		
 		
 
 
   [1]: https://github.com/wuwz/ExcelKit-Example
-  [2]: https://github.com/wuwz/ExcelKit/blob/master/ExcelKit-1.1.jar?raw=true
+  [2]: https://github.com/wuwz/ExcelKit/blob/master/compile-jar/ExcelKit-2.0.jar?raw=true
