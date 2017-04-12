@@ -175,7 +175,13 @@
 		.setMaxSheetRecords(10000) //设置每个sheet的最大记录数,默认为10000,可不设置
 		.toExcel(records, "用户数据", new FileOutputStream(new File("c:/test001.xlsx")));
 ```
-		
+
+
+# 捐赠
+> 如果您觉得该项目有帮助，赏作者一杯咖啡吧！
+![支付宝捐赠](http://git.oschina.net/uploads/images/2017/0412/113441_f04f1e62_955503.jpeg "支付宝捐赠")
+![微信捐赠](http://git.oschina.net/uploads/images/2017/0412/113640_e3d83a5b_955503.png "微信捐赠")
+	
 		
 
 
