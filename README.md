@@ -30,9 +30,15 @@
 ``` xml
          <dependency>
     		<groupId>org.wuwz</groupId>
-			<artifactId>ExcelKit</artifactId>
-			<version>2.0</version>
-		</dependency>
+		<artifactId>ExcelKit</artifactId>
+		<version>2.0</version>
+	</dependency>
+        <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.4.01</version>
+        </dependency>
+
 		
 
         <!--以下视情况而定-->
