@@ -96,7 +96,6 @@
 
 1. 固定的数值转换为字符串值（如：1代表男，2代表女）
 
-
 	表达式: ```"s:1=男,2=女"```
 	
 	
@@ -104,9 +103,11 @@
 
    需要实现org.wuwz.poi.convert.ExportConvert接口
    
-	表达式: ```"c:org.wuwz.poi.test.GradeIdConvert"```
+   表达式: ```"c:org.wuwz.poi.test.GradeIdConvert"```
+	
 
 ``` java
+
 	public class GradeIdConvert implements ExportConvert {
 		
 		static Map<Integer, String> records;
