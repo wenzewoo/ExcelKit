@@ -35,7 +35,7 @@
     <dependency>
         <groupId>org.wuwz</groupId>
         <artifactId>ExcelKit</artifactId>
-        <version>2.0.1</version> //注意：该版本由于gpg秘钥问题,还暂时没有提交到Maven中心仓库,目前的方式是建议clone此项目，手动编译到本地仓库使用
+        <version>2.0.1</version>
     </dependency>
 
 		
