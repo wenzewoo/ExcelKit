@@ -79,9 +79,10 @@ public class POIUtils {
 	 * @param value 自适应需要单元格内容进行计算
 	 */
 	public static void setColumnWidth(SXSSFSheet sheet,int index, short width, String value) {
-		if (width == -1) {
+		if (width == -1 && value != null && !"".equals(value)) {
 			sheet.setColumnWidth(index, (short) (value.length() * 512));
 		} else {
+			width = width == -1 ? 200 : width;
 			sheet.setColumnWidth(index, (short) (width * 35.7));
 		}
 	}

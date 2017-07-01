@@ -41,10 +41,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -92,7 +95,7 @@ public class ExcelKit {
 	/**
 	 * 用于生成本地文件
 	 * 
-	 * @param _class
+	 * @param clazz
 	 *            实体Class对象
 	 * @return ExcelKit
 	 */
@@ -103,7 +106,7 @@ public class ExcelKit {
 	/**
 	 * 用于浏览器导出
 	 * 
-	 * @param _class
+	 * @param clazz
 	 *            实体Class对象
 	 * @param response
 	 *            原生HttpServletResponse对象
@@ -273,7 +276,6 @@ public class ExcelKit {
 					SXSSFRow bodyRow = POIUtils.newSXSSFRow(sheet, i + 1 - startNo);
 
 					for (int j = 0; j < exportItems.size(); j++) {
-
 						// 处理单元格值
 						String cellValue = exportItems.get(j).getReplace();
 						if ("".equals(cellValue)) {
@@ -293,7 +295,8 @@ public class ExcelKit {
 						POIUtils.setColumnWidth(sheet, j, exportItems.get(j).getWidth(), cellValue);
 
 						SXSSFCell cell = POIUtils.newSXSSFCell(bodyRow, j);
-						cell.setCellValue(cellValue);
+						// fix: 当值为“”时,当前index的cell会失效
+						cell.setCellValue("".equals(cellValue) ? null : cellValue);
 						
 						CellStyle style = wb.createCellStyle();
 						Font font = wb.createFont();
@@ -309,7 +312,7 @@ public class ExcelKit {
 			// 生成Excel文件并下载.(通过response对象是否为空来判定是使用浏览器下载还是直接写入到output中)
 			POIUtils.writeByLocalOrBrowser(mResponse, handler.exportFileName(sheetName), wb, out);
 		} catch (Exception e) {
-			log.error("生成Excelw文件失败:" + e.getMessage(), e);
+			log.error("生成Excel文件失败:" + e.getMessage(), e);
 			return false;
 		}
 

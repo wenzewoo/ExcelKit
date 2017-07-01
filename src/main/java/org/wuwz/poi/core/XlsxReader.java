@@ -30,9 +30,7 @@
 package org.wuwz.poi.core;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -241,31 +239,30 @@ public class XlsxReader extends DefaultHandler {
 			thisStr = '"' + value.toString() + '"';
 			break;
 		case INLINESTR:
-			XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
-
-			thisStr = rtsi.toString();
-			rtsi = null;
+			thisStr = new XSSFRichTextString(value.toString()).toString();
 			break;
 		case STRING:
 			String sstIndex = value.toString();
 			try {
 				int idx = Integer.parseInt(sstIndex);
-				XSSFRichTextString rtss = new XSSFRichTextString(mSharedStringsTable.getEntryAt(idx));
-				thisStr = rtss.toString();
-				rtss = null;
+				thisStr = new XSSFRichTextString(mSharedStringsTable.getEntryAt(idx)).toString();
 			} catch (NumberFormatException ex) {
 				thisStr = value.toString();
 			}
 			break;
 		case NUMBER:
 			if (mFormatString != null) {
-				thisStr = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString)
-						.trim();
+				try {
+					thisStr = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString)
+                            .trim();
+				} catch (NumberFormatException e) {
+					thisStr = mEmptyCellValue;
+				}
 			} else {
 				thisStr = value;
 			}
 
-			thisStr = thisStr.replace("_", "").trim();
+			thisStr = thisStr != null ? thisStr.replace("_", "").trim() : null;
 			break;
 		case DATE:
 			thisStr = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString);
@@ -294,13 +291,11 @@ public class XlsxReader extends DefaultHandler {
 
 		// t元素也包含字符串
 		if (mIsTElement) {
-			// 将单元格内容加入rowlist中，在这之前先去掉字符串前后的空白符
 			String value = mLastContents.trim();
 			mRowData.add(mCurrentColumnIndex, value);
 			mCurrentColumnIndex++;
 			mIsTElement = false;
-		} else if ("v".equals(name)) {
-			// v => 单元格的值，如果单元格是字符串则v标签的值为该字符串在SST中的索引
+		} else if ("c".equals(name)) {
 			String value = this.getDataValue(mLastContents.trim(), "");
 
 			// 补全单元格之间的空单元格
@@ -313,30 +308,29 @@ public class XlsxReader extends DefaultHandler {
 
 			mRowData.add(mCurrentColumnIndex, value);
 			mCurrentColumnIndex++;
-		} else {
-			// 如果标签名称为 row ，这说明已到行尾，调用 optRows() 方法
-			if (name.equals("row")) {
-				// 默认第一行为表头，以该行单元格数目为最大数目
-				if (mCurrentRowIndex == 0) {
-					mMaxRef = mCurrentRef;
-				}
-				// 补全一行尾部可能缺失的单元格
-				if (mMaxRef != null) {
-					for (int i = 0; i < countNullCell(mMaxRef, mCurrentRef); i++) {
-						mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
-						mCurrentColumnIndex++;
-					}
-				}
-
-				if (!mRowData.isEmpty()) {
-					mReadHandler.handler(mSheetIndex, mCurrentRowIndex, mRowData);
-				}
-				mRowData.clear();
-				mCurrentRowIndex++;
-				mCurrentColumnIndex = 0;
-				mPreviousRef = null;
-				mCurrentRef = null;
+		}
+		// 如果标签名称为 row ，这说明已到行尾，调用 optRows() 方法
+		else if("row".equals(name)) {
+			// 默认第一行为表头，以该行单元格数目为最大数目
+			if (mCurrentRowIndex == 0) {
+				mMaxRef = mCurrentRef;
 			}
+			// 补全一行尾部可能缺失的单元格
+			if (mMaxRef != null) {
+				for (int i = 0; i < countNullCell(mMaxRef, mCurrentRef); i++) {
+					mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
+					mCurrentColumnIndex++;
+				}
+			}
+
+			if (!mRowData.isEmpty()) {
+				mReadHandler.handler(mSheetIndex, mCurrentRowIndex, mRowData);
+			}
+			mRowData.clear();
+			mCurrentRowIndex++;
+			mCurrentColumnIndex = 0;
+			mPreviousRef = null;
+			mCurrentRef = null;
 		}
 	}
 
@@ -346,6 +340,12 @@ public class XlsxReader extends DefaultHandler {
 		mLastContents += new String(ch, start, length);
 	}
 
+	/**
+	 * 计算两个单元格之间的单元格数目(同一行)
+	 * @param ref
+	 * @param ref2
+	 * @return
+	 */
 	private int countNullCell(String ref, String ref2) {
 		// excel2007最大行数是1048576，最大列数是16384，最后一列列名是XFD
 		String xfd = ref.replaceAll("\\d+", "");
