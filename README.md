@@ -37,7 +37,7 @@
     <dependency>
         <groupId>org.wuwz</groupId>
         <artifactId>ExcelKit</artifactId>
-        <version>2.0.1</version>
+        <version>${maven库上最新版本号https://mvnrepository.com/artifact/org.wuwz/ExcelKit}</version>
     </dependency>
 
 		
