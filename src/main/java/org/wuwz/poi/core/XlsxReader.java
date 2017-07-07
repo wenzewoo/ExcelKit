@@ -113,6 +113,7 @@ public class XlsxReader extends DefaultHandler {
 			parser.parse(sheetSource);
 			sheet.close();
 		}
+		pkg.close();
 	}
 
 	/**
@@ -141,6 +142,7 @@ public class XlsxReader extends DefaultHandler {
 		InputSource sheetSource = new InputSource(sheet);
 		parser.parse(sheetSource);
 		sheet.close();
+		pkg.close();
 	}
 
 	private XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException {
@@ -177,7 +179,7 @@ public class XlsxReader extends DefaultHandler {
 	/**
 	 * 处理数据类型
 	 * 
-	 * @param attributes
+	 * @param attributes attributes
 	 */
 	public void setNextDataType(Attributes attributes) {
 		mNextDataType = CellValueType.NUMBER;
