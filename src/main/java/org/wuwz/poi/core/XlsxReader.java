@@ -182,7 +182,7 @@ public class XlsxReader extends DefaultHandler {
 	 * @param attributes attributes
 	 */
 	public void setNextDataType(Attributes attributes) {
-		mNextDataType = CellValueType.NUMBER;
+		mNextDataType = CellValueType.STRING;
 		mFormatIndex = -1;
 		mFormatString = null;
 		String cellType = attributes.getValue("t");
@@ -199,17 +199,13 @@ public class XlsxReader extends DefaultHandler {
 		} else if ("str".equals(cellType)) {
 			mNextDataType = CellValueType.FORMULA;
 		}
+		//TODO: 日期类型的判断
 
 		if (cellStyleStr != null) {
 			int styleIndex = Integer.parseInt(cellStyleStr);
 			XSSFCellStyle style = mStylesTable.getStyleAt(styleIndex);
 			mFormatIndex = style.getDataFormat();
 			mFormatString = style.getDataFormatString();
-
-			if ("m/d/yy" == mFormatString) {
-				mNextDataType = CellValueType.DATE;
-				mFormatString = "yyyy-MM-dd hh:mm:ss.SSS";
-			}
 
 			if (mFormatString == null) {
 				mNextDataType = CellValueType.NULL;
@@ -223,62 +219,51 @@ public class XlsxReader extends DefaultHandler {
 	 * 
 	 * @param value
 	 *            单元格的值（这时候是一串数字）
-	 * @param thisStr
+	 * @param newValue
 	 *            一个空字符串
 	 * @return string
 	 */
-	public String getDataValue(String value, String thisStr) {
+	public String getDataValue(String value, String newValue) {
 		switch (mNextDataType) {
 		// 这几个的顺序不能随便交换，交换了很可能会导致数据错误
 		case BOOL:
 			char first = value.charAt(0);
-			thisStr = first == '0' ? "FALSE" : "TRUE";
+			newValue = first == '0' ? "FALSE" : "TRUE";
 			break;
 		case ERROR:
-			thisStr = "\"ERROR:" + value.toString() + '"';
+			newValue = "\"ERROR:" + value.toString() + '"';
 			break;
 		case FORMULA:
-			thisStr = '"' + value.toString() + '"';
+			newValue = '"' + value.toString() + '"';
 			break;
 		case INLINESTR:
-			thisStr = new XSSFRichTextString(value.toString()).toString();
+			newValue = new XSSFRichTextString(value.toString()).toString();
 			break;
 		case STRING:
-			String sstIndex = value.toString();
-			try {
-				int idx = Integer.parseInt(sstIndex);
-				thisStr = new XSSFRichTextString(mSharedStringsTable.getEntryAt(idx)).toString();
-			} catch (NumberFormatException ex) {
-				thisStr = value.toString();
-			}
+			newValue = String.valueOf(value);
 			break;
 		case NUMBER:
 			if (mFormatString != null) {
 				try {
-					thisStr = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString)
-                            .trim();
+					newValue = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString).trim();
 				} catch (NumberFormatException e) {
-					thisStr = mEmptyCellValue;
+					newValue = mEmptyCellValue;
 				}
 			} else {
-				thisStr = value;
+				newValue = value;
 			}
-
-			thisStr = thisStr != null ? thisStr.replace("_", "").trim() : null;
+			newValue = newValue != null ? newValue.replace("_", "").trim() : null;
 			break;
 		case DATE:
-			thisStr = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString);
-
-			// 对日期字符串作特殊处理
-			thisStr = thisStr.replace(" ", "T");
+			// TODO:对日期字符串作特殊处理
+			newValue = mFormatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString);
+			newValue = newValue.replace(" ", "T");
 			break;
 		default:
-			thisStr = " ";
-
+			newValue = " ";
 			break;
 		}
-
-		return thisStr;
+		return newValue;
 	}
 
 	@Override
