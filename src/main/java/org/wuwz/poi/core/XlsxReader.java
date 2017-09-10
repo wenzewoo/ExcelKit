@@ -304,11 +304,12 @@ public class XlsxReader extends DefaultHandler {
 			}
 			// 补全一行尾部可能缺失的单元格
 			if (mMaxRef != null) {
-				for (int i = 0; i < countNullCell(mMaxRef, mCurrentRef); i++) {
+				for (int i = 0; i <= countNullCell(mMaxRef, mCurrentRef); i++) {
 					mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
 					mCurrentColumnIndex++;
 				}
 			}
+			// TODO: 补全行首可能缺失的单元格
 
 			if (!mRowData.isEmpty()) {
 				mReadHandler.handler(mSheetIndex, mCurrentRowIndex, mRowData);
