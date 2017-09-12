@@ -1,0 +1,225 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.wuwz</groupId>
+	<artifactId>ExcelKit</artifactId>
+	<version>2.0.3-beta-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>ExcelKit</name>
+	<url>http://github.com/wuwz/ExcelKit</url>
+	<description>Excel导入导出工具（简单、好用且轻量级的海量Excel文件导入导出解决方案.）</description>
+	<developers>
+		<developer>
+			<name>wuwz</name>
+			<email>wuwz@live.com</email>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:wuwz/ExcelKit.git</connection>
+		<developerConnection>scm:git:git@github.com:wuwz/ExcelKit.git</developerConnection>
+		<url>git@github.com:wuwz/ExcelKit.git</url>
+	</scm>
+
+	<properties>
+		<encoding>UTF-8</encoding>
+		<jdk-version>1.6</jdk-version>
+		<poi-version>3.8</poi-version>
+		<beanutils-version>1.9.3</beanutils-version>
+		<dom4j-version>1.6.1</dom4j-version>
+		<jaxen-version>1.1.6</jaxen-version>
+		<xerces-version>2.11.0</xerces-version>
+
+		<!-- provided dependencies -->
+		<servlet-version>3.0.1</servlet-version>
+		<log4j-version>1.2.9</log4j-version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${beanutils-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>${dom4j-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>${jaxen-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>${xerces-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+		</dependency>
+
+
+
+		<!-- provided dependencies -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j-version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<target>1.7</target>
+					<source>1.7</source>
+					<encoding>${encoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<profiles>
+		<profile>
+			<id>jdk-profile</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<jdk>${jdk-version}</jdk>
+			</activation>
+			<properties>
+				<maven.compiler.source>${jdk-version}</maven.compiler.source>
+				<maven.compiler.target>${jdk-version}</maven.compiler.target>
+				<maven.compiler.compilerVersion>${jdk-version}</maven.compiler.compilerVersion>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Compile -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.6.1</version>
+						<configuration>
+							<source>${jdk-version}</source>
+							<target>${jdk-version}</target>
+							<encoding>${encoding}</encoding>
+						</configuration>
+						<executions>
+							<execution>
+								<id>default-compile</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<encoding>${encoding}</encoding>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Source -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Javadoc -->
+					<!--<plugin>-->
+						<!--<groupId>org.apache.maven.plugins</groupId>-->
+						<!--<artifactId>maven-javadoc-plugin</artifactId>-->
+						<!--<version>2.10.4</version>-->
+						<!--<configuration>-->
+							<!--<charset>${encoding}</charset>-->
+							<!--<encoding>${encoding}</encoding>-->
+							<!--<docencoding>${encoding}</docencoding>-->
+						<!--</configuration>-->
+						<!--<executions>-->
+							<!--<execution>-->
+								<!--<phase>package</phase>-->
+								<!--<goals>-->
+									<!--<goal>jar</goal>-->
+								<!--</goals>-->
+							<!--</execution>-->
+						<!--</executions>-->
+					<!--</plugin>-->
+					<!-- GPG -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+	<!--		<distributionManagement>
+				<snapshotRepository>
+					<id>oss</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>oss</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>-->
+
+		</profile>
+	</profiles>
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>Nexus Release Repository</name>
+			<url>http://192.168.0.116:8081/nexus/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>Nexus Snapshot Repository</name>
+			<url>http://192.168.0.116:8081/nexus/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
