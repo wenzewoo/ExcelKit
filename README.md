@@ -43,17 +43,6 @@
         <artifactId>ExcelKit</artifactId>
         <version>${maven库上最新版本号https://mvnrepository.com/artifact/org.wuwz/ExcelKit}</version>
     </dependency>
-
-    <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.9</version>
-    </dependency>
-    <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>3.0.1</version>
-    </dependency>
 ```
 
 注：非maven项目如何下载jar包？参考：http://blog.csdn.net/itmyhome1990/article/details/50233773
