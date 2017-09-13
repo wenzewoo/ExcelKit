@@ -6,6 +6,10 @@
 
 # 更新日志：
 
+*   2017-9-14：下拉框，流上传，行尾空单元格，导出单元格格式（maxcess）
+
+*   2017-9-11：修复：补全行尾可能缺失的单元格，待修复: 补全行首可能缺失的单元格
+
 *   2017-7-8： 修复读取Excel文件后，临时文件一直占用的问题
 
 *   2017-6-25： 修复解决导入以及导出单元格空值的问题
@@ -40,8 +44,6 @@
         <version>${maven库上最新版本号https://mvnrepository.com/artifact/org.wuwz/ExcelKit}</version>
     </dependency>
 
-		
-    <!--以下视情况而定-->
     <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
@@ -88,6 +90,9 @@
 	
 	    @ExportConfig(value = "年级", convert = "c:org.wuwz.poi.test.GradeIdConvert")
 	    private Integer gradeId;
+	    
+	    @ExportConfig(value = "下拉框", range="c:examples.RangeConvert")
+		private String gendex;
 	    
 	    // getter setter...
 	    
@@ -154,34 +159,61 @@
 
 # 常用例子：
 
-1.海量数据Excel文件读取（边读边处理）：
+1.海量数据Excel文件读取、导入（边读边处理）：
 
 	
 
 ``` java
-	ExcelKit.$Import()
-	    .setEmptyCellValue(null) // 设置空单元格的值,默认为null,可不设置
-	    .readExcel(new File("c:/bigexcel.xlsx"), new ReadHandler() {
-	    
-            @Override
-            public void handler(int sheetIndex, int rowIndex, List<String> row) {
-                if(rowIndex == 0) return; //排除第一行..
-                
-                    System.out.println("当前行："+rowIndex);
-                    System.out.println("行数据："+row);
-                    System.out.println();
-                    
-                    // 入库解析
-                    if(row.get(0) != null) {
-                        // UID...
-                    } 
-                    
-                    if(row.get(1) != null) {
-                        // 用户名..
-                    }
-            }
-	    
-	    });
+		/*1. 海量数据导入 （伪代码）*/
+		
+		// 获取上传文件
+		File upload = null;
+		
+		// 读取并解析文件
+		final List<Object> exportData = new ArrayList<Object>();
+		ExcelKit.$Import().readExcel(upload, new ReadHandler() {
+			
+			@Override
+			public void handler(int sheetIndex, int rowIndex, List<String> row) {
+				try {
+					// 排除表头
+					if(rowIndex == 0) return;
+					
+					// 验证行数据
+					if(!validRow(row)) {
+						// TODO: 行数据rowIndex验证失败，记录
+						
+					} else {
+						// 解析行数据
+						
+						// 方案1：记录行数据，读取完成后批量入库
+						exportData.add(analysisRow(row));
+						
+						// 方案2：单行直接入库
+						// xxx.save(analysisRow(row));
+					} 
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					// 读取行：rowIndex发生异常，记录
+				}
+			}
+
+			private Object analysisRow(List<String> row) {
+				// TODO 解析行数据为对象
+				return null;
+			}
+
+			private boolean validRow(List<String> row) {
+				// TODO 验证行数据
+				return true;
+			}
+		});
+		
+		// 方案1： 文件读取解析完毕, 批量入库。
+		xxx.batchSave(exportData);
+		
+		// TODO 响应结果，成功条数、失败条数（行、原因）
 ```
 
 
