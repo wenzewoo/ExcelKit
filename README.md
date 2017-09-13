@@ -37,11 +37,13 @@
 
 > 使用本工具无需关注poi依赖问题（只需引入以下相关jar包)。
 
+
 ``` xml
     <dependency>
         <groupId>org.wuwz</groupId>
         <artifactId>ExcelKit</artifactId>
-        <version>${maven库上最新版本号https://mvnrepository.com/artifact/org.wuwz/ExcelKit}</version>
+        <version>2.0.4</version>
+        //(近期由于中央Maven仓库上传数次皆不完整，请clone本项目后install到本地使用，后续版本解决后启用)
     </dependency>
 ```
 
