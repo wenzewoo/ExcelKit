@@ -29,6 +29,8 @@
  */
 package org.wuwz.poi.core;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -45,6 +47,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,7 +66,6 @@ public class XlsxReader extends DefaultHandler {
 	private String mLastContents; // 上一次的内容
 	private boolean mNextIsString;// 字符串标识
 	private int mSheetIndex = -1;
-	private int mPreviousRowIndex = 0; //用来计算换行了 首个单元格为空
 	private int mCurrentRowIndex = 0;
 	private int mCurrentColumnIndex = 0;
 	private boolean mIsTElement;
@@ -101,8 +103,11 @@ public class XlsxReader extends DefaultHandler {
 	 */
 	public void process(String fileName) throws Exception {
 		POIUtils.checkExcelFile(fileName);
+		processAll(OPCPackage.open(fileName));
+	}
 
-		OPCPackage pkg = OPCPackage.open(fileName);
+	private void processAll(OPCPackage pkg)
+			throws IOException, OpenXML4JException, InvalidFormatException, SAXException {
 		XSSFReader xssfReader = new XSSFReader(pkg);
 		mStylesTable = xssfReader.getStylesTable();
 		SharedStringsTable sst = xssfReader.getSharedStringsTable();
@@ -118,6 +123,7 @@ public class XlsxReader extends DefaultHandler {
 		}
 		pkg.close();
 	}
+	
 	/**
 	 * 处理所有sheet
 	 *
@@ -128,22 +134,7 @@ public class XlsxReader extends DefaultHandler {
 	 */
 	public void process(InputStream is,String fileName) throws Exception {
 		POIUtils.checkExcelFile(fileName);
-
-		OPCPackage pkg = OPCPackage.open(is);
-		XSSFReader xssfReader = new XSSFReader(pkg);
-		mStylesTable = xssfReader.getStylesTable();
-		SharedStringsTable sst = xssfReader.getSharedStringsTable();
-		XMLReader parser = this.fetchSheetParser(sst);
-		Iterator<InputStream> sheets = xssfReader.getSheetsData();
-		while (sheets.hasNext()) {
-			mCurrentRowIndex = 0;
-			mSheetIndex++;
-			InputStream sheet = sheets.next();
-			InputSource sheetSource = new InputSource(sheet);
-			parser.parse(sheetSource);
-			sheet.close();
-		}
-		pkg.close();
+		processAll(OPCPackage.open(is));
 	}
 
 	/**
@@ -158,8 +149,11 @@ public class XlsxReader extends DefaultHandler {
 	 */
 	public void process(String fileName, int sheetIndex) throws Exception {
 		POIUtils.checkExcelFile(fileName);
+		processBySheet(sheetIndex, OPCPackage.open(fileName));
+	}
 
-		OPCPackage pkg = OPCPackage.open(fileName);
+	private void processBySheet(int sheetIndex, OPCPackage pkg)
+			throws IOException, OpenXML4JException, InvalidFormatException, SAXException {
 		XSSFReader r = new XSSFReader(pkg);
 		SharedStringsTable sst = r.getSharedStringsTable();
 
@@ -186,21 +180,7 @@ public class XlsxReader extends DefaultHandler {
 	 */
 	public void process(InputStream is,String fileName, int sheetIndex) throws Exception {
 		POIUtils.checkExcelFile(fileName);
-
-		OPCPackage pkg = OPCPackage.open(is);
-		XSSFReader r = new XSSFReader(pkg);
-		SharedStringsTable sst = r.getSharedStringsTable();
-
-		XMLReader parser = fetchSheetParser(sst);
-
-		// rId2 found by processing the Workbook
-		// 根据 rId# 或 rSheet# 查找sheet
-		InputStream sheet = r.getSheet("rId" + (sheetIndex + 1));
-		mSheetIndex++;
-		InputSource sheetSource = new InputSource(sheet);
-		parser.parse(sheetSource);
-		sheet.close();
-		pkg.close();
+		processBySheet(sheetIndex, OPCPackage.open(is));
 	}
 
 	private XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException {
@@ -305,9 +285,10 @@ public class XlsxReader extends DefaultHandler {
 		}
 		return newValue;
 	}
+	
 	@Override
 	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-// c => 单元格
+		// c => 单元格
 		if ("c".equals(name)) {
 			// 设定单元格类型
 			this.setNextDataType(attributes);
@@ -345,7 +326,7 @@ public class XlsxReader extends DefaultHandler {
 
 			// 补全单元格之间的空单元格 mCurrentRef 和 mPreviousRef 差距超过2
 			if (!mCurrentRef.equals(mPreviousRef)) {
-				for (int i = 0; i < countNullCell(mCurrentRef, mPreviousRef)-1; i++) {
+				for (int i = 0; i < countNullCell(mCurrentRef, mPreviousRef); i++) {
 					mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
 					mCurrentColumnIndex++;
 				}
@@ -362,7 +343,7 @@ public class XlsxReader extends DefaultHandler {
 			}
 			// 补全一行尾部可能缺失的单元格
 			if (mMaxRef != null) {
-				for (int i = 0; i < countNullCell(mMaxRef, mCurrentRef); i++) {
+				for (int i = 0; i <= countNullCell(mMaxRef, mCurrentRef); i++) {
 					mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
 					mCurrentColumnIndex++;
 				}
@@ -402,7 +383,7 @@ public class XlsxReader extends DefaultHandler {
 		char[] letter = xfd.toCharArray();
 		char[] letter_1 = xfd_1.toCharArray();
 		int res = (letter[0] - letter_1[0]) * 26 * 26 + (letter[1] - letter_1[1]) * 26 + (letter[2] - letter_1[2]);
-		return res ;
+		return res - 1;
 	}
 
 	private String fillChar(String str, int len, char let, boolean isPre) {

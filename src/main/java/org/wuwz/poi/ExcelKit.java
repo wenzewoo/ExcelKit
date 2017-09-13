@@ -76,8 +76,7 @@ public class ExcelKit {
     // 分Sheet机制：每个Sheet最多多少条数据
     private Integer mMaxSheetRecords = 10000;
     // 缓存数据格式器实例,避免多次使用反射进行实例化
-    private Map<String, ExportConvert> mConvertInstanceCache = new HashMap<>();
-    private Map<String, ExportRange> mRangeInstanceCache = new HashMap<>();
+    private Map<String, ExportConvert> mConvertInstanceCache = new HashMap<String, ExportConvert>();
 
     protected ExcelKit() {
     }
@@ -288,7 +287,6 @@ public class ExcelKit {
                         if ("".equals(cellValue)) {
                             try {
                                 cellValue = BeanUtils.getProperty(data.get(i), exportItems.get(j).getField());
-//                                System.out.println(exportItems.get(j).getField()+cellValue);
                             } catch (Exception e) {
                                 log.error("获取" + exportItems.get(j).getField() + "的值失败.", e);
                             }
@@ -299,8 +297,8 @@ public class ExcelKit {
                             cellValue = convertCellValue(Integer.parseInt(cellValue), exportItems.get(j).getConvert());
                         }
 
-                            // 单元格宽度
-                            POIUtils.setColumnWidth(sheet, j, exportItems.get(j).getWidth(), cellValue);
+                        // 单元格宽度
+                        POIUtils.setColumnWidth(sheet, j, exportItems.get(j).getWidth(), cellValue);
 
                         SXSSFCell cell = POIUtils.newSXSSFCell(bodyRow, j);
                         // fix: 当值为“”时,当前index的cell会失效
@@ -454,34 +452,20 @@ public class ExcelKit {
         return String.valueOf(oldValue);
     }
 
-    // convertCellValue: number to String (beta)
-    private String[] rangeCellValues(String format) {
+    // 填充下拉数据验证(maxcess)
+	private String[] rangeCellValues(String format) {
         try {
             String protocol = format.split(":")[0];
-
-            // 键值对字符串解析：s:男,女
-            if ("s".equalsIgnoreCase(protocol)) {
-
-                String[] range = format.split(":")[1].split(",");
-                return range;
-
-            }
-            // 使用处理类进行处理：c:org.wuwz.poi.test.GradeCellFormat ,其实 下拉是在设置表头的时候设置的 这里我觉得可以不用 缓存
             if ("c".equalsIgnoreCase(protocol)) {
                 String clazz = format.split(":")[1];
-                ExportRange export = mRangeInstanceCache.get(clazz);
+                ExportRange export = (ExportRange) Class.forName(clazz).newInstance();
 
-                if (export == null) {
-                    export = (ExportRange) Class.forName(clazz).newInstance();
-                    mRangeInstanceCache.put(clazz, export);
+                if (export != null) {
+                	return export.handler();
                 }
-
-                if (mRangeInstanceCache.size() > 10)
-                    mRangeInstanceCache.clear();
-               return export.handler();
             }
         } catch (Exception e) {
-            log.error("出现问题,可能是@ExportConfig.format()的值不规范导致。", e);
+            log.error("出现问题,可能是@ExportConfig.range()的值不规范导致。", e);
         }
         return new String[]{};
     }
@@ -495,7 +479,7 @@ public class ExcelKit {
     private void required$ExportParams() {
         if (mClass == null || mResponse == null) {
             throw new IllegalArgumentException(
-                    "请先使用org.wuwz.poi.ExcelKit.$ExportRange(Class<?>, HttpServletResponse)构造器初始化参数。");
+                    "请先使用org.wuwz.poi.ExcelKit.$Export(Class<?>, HttpServletResponse)构造器初始化参数。");
         }
 
     }

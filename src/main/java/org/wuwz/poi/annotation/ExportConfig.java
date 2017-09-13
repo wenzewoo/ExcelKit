@@ -62,7 +62,7 @@ public @interface ExportConfig {
 	 * <b>表达式:</b> "s:1=男,2=女"<br/>
 	 * 
 	 * 2. 数值对应的值需要查询数据库才能进行映射(实现org.wuwz.poi.convert.ExportConvert接口)<br/>
-	 * <b>表达式:</b> "c:org.wuwz.poi.test.GradeIdConvert"
+	 * <b>表达式:</b> "c:org.wuwz.poi.convert.ExportConvert实现类"
 	 * 
 	 * @return 默认不启用
 	 */
@@ -84,5 +84,10 @@ public @interface ExportConfig {
 	 */
 	String replace() default "";
 
-	String  range() default  "" ;
+	/**
+	 * 设置单元格数据验证（下拉框）
+	 * <b>表达式:</b> "c:org.wuwz.poi.convert.ExportRange实现类"
+	 * @return 默认不启用
+	 */
+	String range() default  "" ;
 }
