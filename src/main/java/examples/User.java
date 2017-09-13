@@ -39,7 +39,7 @@ public class User {
 	@ExportConfig("UID")
 	private Integer uid;
 	@ExportConfig("日期")
-    private Date date;
+	private Date date;
 	@ExportConfig("用户名")
 	private String username;
 
@@ -51,8 +51,9 @@ public class User {
 
 	@ExportConfig(value = "年级", convert = "c:examples.GradeIdConvert")
 	private Integer gradeId;
-    @ExportConfig(value = "gender", range="c:examples.RangeConvert")
-	private String gendex ;
+	
+	@ExportConfig(value = "gender", range = "c:examples.RangeConvert")
+	private String gendex;
 
 	public String getGendex() {
 		return gendex;
@@ -71,6 +72,7 @@ public class User {
 		this.uid = uid;
 		return this;
 	}
+
 	public User setDate(Date date) {
 		this.date = date;
 		return this;
@@ -106,6 +108,7 @@ public class User {
 	public Integer getGradeId() {
 		return gradeId;
 	}
+
 	public Date getDate() {
 		return date;
 	}

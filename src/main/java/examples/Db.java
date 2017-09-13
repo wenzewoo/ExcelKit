@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Db {
-	static final List<User> users = new ArrayList<>();
+	static final List<User> users = new ArrayList<User>();
 	
 	static {
 		// 模拟15条数据

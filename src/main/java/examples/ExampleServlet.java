@@ -1,138 +1,88 @@
-/**
-
- * Copyright (c) 2017, ������ (wuwz@live.com).
-
- *
-
- * Licensed under the Apache License, Version 2.0 (the "License");
-
- * you may not use this file except in compliance with the License.
-
- * You may obtain a copy of the License at
-
- *
-
- *      http://www.apache.org/licenses/LICENSE-2.0
-
- *
-
- * Unless required by applicable law or agreed to in writing, software
-
- * distributed under the License is distributed on an "AS IS" BASIS,
-
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
- * See the License for the specific language governing permissions and
-
- * limitations under the License.
-
- */
 package examples;
 
-import javax.servlet.http.HttpServlet;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author wuwz
- */
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.wuwz.poi.ExcelKit;
+import org.wuwz.poi.hanlder.ReadHandler;
+
+
 // @WebServlet("/example")
 public class ExampleServlet extends HttpServlet {
-//
-//	private static final long serialVersionUID = -8791212010764446339L;
-//
-//	@Override
-//	protected void service(HttpServletRequest request, HttpServletResponse response)
-//			throws ServletException, IOException {
-//		request.setCharacterEncoding("UTF-8");
-//		response.setCharacterEncoding("UTF-8");
-//
-//		String t = request.getParameter("t");
-//		if ("list".equals(t)) {
-//			toListPage(request, response);
-//		}
-//		// 导出
-//		else if ("export".equals(t)) {
-//
-//			ExcelKit.$ExportRange(User.class, response)
-//                    .setMaxSheetRecords(5)
-//                    .toExcel(Db.getUsers(), "用户信息");
-//		}
-//		// 导入
-//		else if ("import".equals(t)) {
-//
-//			importExcelFile(request, response);
-//		}
-//	}
-//
-//	private void importExcelFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//		PrintWriter writer = response.getWriter();
-//		if (!ServletFileUpload.isMultipartContent(request)) {
-//		    writer.println("Error: enctype!=multipart/form-data");
-//		    writer.flush();
-//		    return;
-//		}
-//
-//		DiskFileItemFactory factory = new DiskFileItemFactory();
-//		factory.setSizeThreshold(1024 * 1024 * 3);
-//		factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
-//
-//		ServletFileUpload upload = new ServletFileUpload(factory);
-//		upload.setFileSizeMax(1024 * 1024 * 40);
-//		upload.setSizeMax(1024 * 1024 * 50);
-//
-//		String uploadPath = request.getServletContext().getRealPath("./") + File.separator + "upload";
-//		File uploadDir = new File(uploadPath);
-//		if (!uploadDir.exists()) {
-//		    uploadDir.mkdir();
-//		}
-//
-//		try {
-//		    List<FileItem> formItems = upload.parseRequest(request);
-//
-//		    if (formItems != null && formItems.size() > 0) {
-//		        for (FileItem item : formItems) {
-//		            if (!item.isFormField()) {
-//		                String fileName = new File(item.getName()).getName();
-//		                String filePath = uploadPath + File.separator + fileName;
-//		                File storeFile = new File(filePath);
-//		                System.out.println(filePath);
-//		                item.write(storeFile);
-//
-//		                // 执行excel文件导入
-//		                ExcelKit.$Import().readExcel(storeFile, new ReadHandler() {
-//
-//							@Override
-//							public void handler(int sheetIndex, int rowIndex, List<String> row) {
-//								if(rowIndex != 0) { //排除第一行
-//									User user = new User()
-//											.setUid(Integer.parseInt(row.get(0)))
-//											.setUsername(row.get(1))
-//											.setPassword(row.get(2))
-//											.setSex(Integer.parseInt(row.get(3)))
-//											.setGradeId(Integer.parseInt(row.get(4)));
-//									Db.addUser(user);
-//								}
-//
-//							}
-//						});
-//
-//
-//		                if(storeFile.exists()) {
-//		                	storeFile.delete();
-//		                }
-//		                toListPage(request, response);
-//		            }
-//		        }
-//		    }
-//		} catch (Exception ex) {
-//			writer.println("Error: "+ex.getMessage());
-//			writer.flush();
-//		}
-//	}
-//
-//	private void toListPage(HttpServletRequest request, HttpServletResponse response)
-//			throws ServletException, IOException {
-//		request.setAttribute("users", Db.getUsers());
-//		request.getRequestDispatcher("/list.jsp").forward(request, response);
-//	}
+
+	private static final long serialVersionUID = -3872315657402568883L;
+
+	
+	/**
+	 * Web端导入导出（伪代码）
+	 */
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		/*1. 海量数据导入 （伪代码）*/
+		
+		// 获取上传文件
+		File upload = null;
+		
+		// 读取并解析文件
+		final List<Object> exportData = new ArrayList<Object>();
+		ExcelKit.$Import().readExcel(upload, new ReadHandler() {
+			
+			@Override
+			public void handler(int sheetIndex, int rowIndex, List<String> row) {
+				try {
+					// 排除表头
+					if(rowIndex == 0) return;
+					
+					// 验证行数据
+					if(!validRow(row)) {
+						// TODO: 行数据rowIndex验证失败，记录
+						
+					} else {
+						// 解析行数据
+						
+						// 方案1：记录行数据，读取完成后批量入库
+						exportData.add(analysisRow(row));
+						
+						// 方案2：单行直接入库
+						// xxx.save(analysisRow(row));
+					} 
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					// 读取行：rowIndex发生异常，记录
+				}
+			}
+
+			private Object analysisRow(List<String> row) {
+				// TODO 解析行数据为对象
+				return null;
+			}
+
+			private boolean validRow(List<String> row) {
+				// TODO 验证行数据
+				return true;
+			}
+		});
+		
+		// 方案1： 文件读取解析完毕, 批量入库。
+		//xxx.batchSave(exportData);
+		
+		// TODO 响应结果，成功条数、失败条数（行、原因）
+		
+		
+		/*2. 导出 （伪代码）*/
+		List<User> users = Db.getUsers();
+		ExcelKit.$Export(User.class, resp).toExcel(users, "用户数据");
+	}
+	
 
 }
