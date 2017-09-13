@@ -27,9 +27,27 @@
  * limitations under the License.
 
  */
-package org.wuwz.poi.convert;
+package examples;
 
-public interface ExportConvert {
+import org.wuwz.poi.convert.ExportConvert;
 
-	String handler(Integer val);
+import java.util.HashMap;
+import java.util.Map;
+
+public class GradeIdConvert implements ExportConvert {
+	
+	static Map<Integer, String> records;
+	static {
+		//默认数据库字典查询 select * from tb_grades
+		records = new HashMap<Integer, String>();
+		records.put(1, "一年级学生");
+		records.put(2, "二年级学生");
+		records.put(3, "三年级学生");
+	}
+
+	@Override
+	public String handler(Integer val) {
+		return records.get(val) != null ? records.get(val) : "没有该记录";
+	}
+
 }

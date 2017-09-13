@@ -37,6 +37,7 @@ public class ExportItem {
 	private String convert;
 	private short color;
 	private String replace;
+	private String  range;//数据有效性 下拉框
 
 	public String getField() {
 		return field;
@@ -89,6 +90,15 @@ public class ExportItem {
 
 	public ExportItem setReplace(String replace) {
 		this.replace = replace;
+		return this;
+	}
+
+	public String getRange() {
+		return range;
+	}
+
+	public ExportItem setRange(String range) {
+		this.range = range;
 		return this;
 	}
 }

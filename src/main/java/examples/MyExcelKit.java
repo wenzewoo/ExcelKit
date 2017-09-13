@@ -1,6 +1,6 @@
 /**
 
- * Copyright (c) 2017, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2017, ������ (wuwz@live.com).
 
  *
 
@@ -27,9 +27,12 @@
  * limitations under the License.
 
  */
-package org.wuwz.poi.convert;
+package examples;
 
-public interface ExportConvert {
+import org.wuwz.poi.ExcelKit;
 
-	String handler(Integer val);
+public class MyExcelKit extends ExcelKit {
+	
+	// 重写..
+	
 }

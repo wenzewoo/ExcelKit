@@ -29,16 +29,19 @@
  */
 package org.wuwz.poi.core;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URLEncoder;
-
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 
 /**
  * <p>
@@ -101,8 +104,34 @@ public class POIUtils {
 		out.flush();
 		out.close();
 	}
-	
-	
+	/**
+	 * 设置某些列的值只能输入预制的数据,显示下拉框.
+	 * @param sheet 要设置的sheet.
+	 * @param textlist 下拉框显示的内容
+	 * @param firstRow 开始行
+	 * @param endRow 结束行
+	 * @param firstCol   开始列
+	 * @param endCol  结束列
+	 * @return 设置好的sheet.
+	 */
+	public static SXSSFSheet setHSSFValidation(SXSSFSheet sheet,
+											  String[] textlist, int firstRow, int endRow, int firstCol,
+											  int endCol) {
+		DataValidationHelper validationHelper = sheet.getDataValidationHelper();
+		// 加载下拉列表内容
+		DataValidationConstraint explicitListConstraint = validationHelper.createExplicitListConstraint(textlist);
+		// 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列
+		CellRangeAddressList regions = new CellRangeAddressList(firstRow,endRow, firstCol, endCol);
+		// 数据有效性对象
+		DataValidation validation = validationHelper.createValidation(explicitListConstraint, regions);
+		validation.setSuppressDropDownArrow(true);
+		validation.createErrorBox("tip","请从下拉列表选取");
+		//错误警告框
+		validation.setShowErrorBox(true);
+		sheet.addValidationData(validation);
+		return sheet;
+	}
+
 	public static void checkExcelFile(File file) {
 		if(file == null || !file.exists()) {
 			throw new IllegalArgumentException("excel文件不存在.");

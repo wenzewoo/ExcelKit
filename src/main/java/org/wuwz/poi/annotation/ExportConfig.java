@@ -29,12 +29,12 @@
  */
 package org.wuwz.poi.annotation;
 
+import org.apache.poi.hssf.util.HSSFColor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.apache.poi.hssf.util.HSSFColor;
 
 /**
  * Excel导出项配置
@@ -83,4 +83,6 @@ public @interface ExportConfig {
 	 * @return 默认true
 	 */
 	String replace() default "";
+
+	String  range() default  "" ;
 }
