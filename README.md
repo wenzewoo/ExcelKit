@@ -6,6 +6,8 @@
 
 # 更新日志：
 
+*   2017-12-28：修复大文件excel内容错误问题, 取消字体颜色设置, 提升文件导出效率.
+
 *   2017-9-14：下拉框，流上传，行尾空单元格，导出单元格格式（maxcess）
 
 *   2017-9-11：修复：补全行尾可能缺失的单元格，待修复: 补全行首可能缺失的单元格
@@ -42,7 +44,7 @@
     <dependency>
         <groupId>org.wuwz</groupId>
         <artifactId>ExcelKit</artifactId>
-        <version>2.0.4</version>
+        <version>2.0.5</version>
         //(近期由于中央Maven仓库上传数次皆不完整，请clone本项目后install到本地使用，后续版本解决后启用)
     </dependency>
 ```

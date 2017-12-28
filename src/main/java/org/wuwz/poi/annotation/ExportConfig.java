@@ -69,10 +69,10 @@ public @interface ExportConfig {
 	String convert() default "";
 	
 	
-	/**
-	 * @return 当前单元格的字体颜色 (默认 HSSFColor.BLACK.index)
-	 */
-	short color() default HSSFColor.BLACK.index;
+//	/**
+//	 * @return 当前单元格的字体颜色 (默认 HSSFColor.BLACK.index)
+//	 */
+//	short color() default HSSFColor.BLACK.index;
 	
 
 	/**

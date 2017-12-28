@@ -35,7 +35,7 @@ public class ExportItem {
 	private String display; // 显示名
 	private short width; // 宽度
 	private String convert;
-	private short color;
+//	private short color;
 	private String replace;
 	private String  range;//数据有效性 下拉框
 
@@ -75,14 +75,14 @@ public class ExportItem {
 		return this;
 	}
 
-	public short getColor() {
-		return color;
-	}
-
-	public ExportItem setColor(short color) {
-		this.color = color;
-		return this;
-	}
+//	public short getColor() {
+//		return color;
+//	}
+//
+//	public ExportItem setColor(short color) {
+//		this.color = color;
+//		return this;
+//	}
 
 	public String getReplace() {
 		return replace;

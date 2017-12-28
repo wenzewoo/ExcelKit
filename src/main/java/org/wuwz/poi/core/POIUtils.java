@@ -83,7 +83,7 @@ public class POIUtils {
 	 */
 	public static void setColumnWidth(SXSSFSheet sheet,int index, short width, String value) {
 		if (width == -1 && value != null && !"".equals(value)) {
-			sheet.setColumnWidth(index, (short) (value.length() * 512));
+			sheet.setColumnWidth(index, (short) (value.length() * 250));
 		} else {
 			width = width == -1 ? 200 : width;
 			sheet.setColumnWidth(index, (short) (width * 35.7));

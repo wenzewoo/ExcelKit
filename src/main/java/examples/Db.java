@@ -30,6 +30,7 @@
 package examples;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -41,10 +42,11 @@ public class Db {
 		Random random = new Random();
 		
 		User user = null;
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 10000; i++) {
 			user = new User()
 				.setUid(i + 1)
 				.setUsername("0000"+(i+1))
+					.setDate(new Date())
 				.setPassword("password")
 				.setSex(random.nextInt(2) % 2 == 0 ? 1 : 2)
 				.setGradeId(random.nextInt(4))

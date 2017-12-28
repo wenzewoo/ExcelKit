@@ -237,7 +237,7 @@ public class ExcelKit {
                         .setDisplay("field".equals(currentExportConfig.value()) ? field.getName() : currentExportConfig.value())
                         .setWidth(currentExportConfig.width())
                         .setConvert(currentExportConfig.convert())
-                        .setColor(currentExportConfig.color())
+//                        .setColor(currentExportConfig.color())
                         .setRange(currentExportConfig.range())
                         .setReplace(currentExportConfig.replace());
                 exportItems.add(currentExportItem);
@@ -304,14 +304,16 @@ public class ExcelKit {
                         // fix: 当值为“”时,当前index的cell会失效
                         cell.setCellValue("".equals(cellValue) ? null : cellValue);
 
+                        /*
+                        TODO: 当数据量过大时,此段代码会引起excel文件报错(发现不可读取的内容)
                         CellStyle style = wb.createCellStyle();
                         Font font = wb.createFont();
                         font.setColor(exportItems.get(j).getColor());
                         style.setFont(font);
-                        //设置单元格为文本格式 主要是为了方面处理 日期等特殊格式
+                        // 设置单元格为文本格式 主要是为了方面处理 日期等特殊格式
                         DataFormat dataFormat = wb.createDataFormat();
                         style.setDataFormat(dataFormat.getFormat("@"));
-                        cell.setCellStyle(style);
+                        cell.setCellStyle(style);*/
                         cell.setCellType(SXSSFCell.CELL_TYPE_STRING);
                     }
                 }
