@@ -44,7 +44,7 @@
 #### WEB环境下的导入导出
 ![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example1.gif)
 
-#### 极端环境下的性能测试(可用内存12m, 执行导出和导入操作)
+#### 极端环境下的性能测试(可用内存12m, 执行10000行数据的导出和导入操作)
 ![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example2.gif)
 
 # 如何使用？
@@ -90,7 +90,7 @@
 	    @ExportConfig("用户名")
 	    private String username;
 	    
-	    @ExportConfig(value = "密码", replace = "******", color = HSSFColor.RED.index)
+	    @ExportConfig(value = "密码", replace = "******")
 	    private String password;
 	
 	    @ExportConfig(value = "性别", width = 50, convert = "s:1=男,2=女")
@@ -99,7 +99,7 @@
 	    @ExportConfig(value = "年级", convert = "c:org.wuwz.poi.test.convert.GradeIdConvert")
 	    private Integer gradeId;
 	    
-	    @ExportConfig(value = "下拉框", range="c:examples.RangeConvert")
+	    @ExportConfig(value = "下拉框", range="c:org.wuwz.poi.test.convert.RangeConvert")
 		private String gendex;
 	    
 	    // getter setter...
