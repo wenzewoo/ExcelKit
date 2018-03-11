@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.wuwz</groupId>
+	<groupId>com.wuwenze</groupId>
 	<artifactId>ExcelKit</artifactId>
 	<version>2.0.6</version>
 	<packaging>jar</packaging>
@@ -10,8 +10,8 @@
 	<description>Excel导入导出工具（简单、好用且轻量级的海量Excel文件导入导出解决方案.）</description>
 	<developers>
 		<developer>
-			<name>wuwz</name>
-			<email>wuwz@live.com</email>
+			<name>wenzewoo</name>
+			<email>wenzewoo@gmail.com</email>
 		</developer>
 	</developers>
 	<licenses>

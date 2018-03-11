@@ -57,7 +57,7 @@
 
 ``` xml
     <dependency>
-        <groupId>org.wuwz</groupId>
+        <groupId>com.wuwenze</groupId>
         <artifactId>ExcelKit</artifactId>
         <version>2.0.6</version>
         //(近期由于中央Maven仓库上传数次皆不完整，请clone本项目后install到本地使用，后续版本解决后启用)
@@ -96,10 +96,10 @@
 	    @ExportConfig(value = "性别", width = 50, convert = "s:1=男,2=女")
 	    private Integer sex;
 	
-	    @ExportConfig(value = "年级", convert = "c:org.wuwz.poi.test.convert.GradeIdConvert")
+	    @ExportConfig(value = "年级", convert = "c:com.wuwenze.poi.test.convert.GradeIdConvert")
 	    private Integer gradeId;
 	    
-	    @ExportConfig(value = "下拉框", range="c:org.wuwz.poi.test.convert.RangeConvert")
+	    @ExportConfig(value = "下拉框", range="c:com.wuwenze.poi.test.convert.RangeConvert")
 		private String gendex;
 	    
 	    // getter setter...
@@ -123,7 +123,7 @@
 
    需要实现org.wuwz.poi.convert.ExportConvert接口
    
-   表达式: ```"c:org.wuwz.poi.test.convert.GradeIdConvert"```
+   表达式: ```"c:com.wuwenze.poi.test.convert.GradeIdConvert"```
 	
 
 ``` java
