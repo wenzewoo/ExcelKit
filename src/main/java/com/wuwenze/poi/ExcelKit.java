@@ -433,7 +433,7 @@ public class ExcelKit {
                     }
                 }
             }
-            // 使用处理类进行处理：c:org.wuwz.poi.test.GradeCellFormat
+            // 使用处理类进行处理：c:com.wuwenze.poi.test.GradeCellFormat
             if ("c".equalsIgnoreCase(protocol)) {
                 String clazz = format.split(":")[1];
                 ExportConvert export = mConvertInstanceCache.get(clazz);
@@ -484,14 +484,14 @@ public class ExcelKit {
 
     private void required$BuilderParams() {
         if (mClass == null) {
-            throw new IllegalArgumentException("请先使用org.wuwz.poi.ExcelKit.$Builder(Class<?>)构造器初始化参数。");
+            throw new IllegalArgumentException("请先使用com.wuwenze.poi.ExcelKit.$Builder(Class<?>)构造器初始化参数。");
         }
     }
 
     private void required$ExportParams() {
         if (mClass == null || mResponse == null) {
             throw new IllegalArgumentException(
-                    "请先使用org.wuwz.poi.ExcelKit.$Export(Class<?>, HttpServletResponse)构造器初始化参数。");
+                    "请先使用com.wuwenze.poi.ExcelKit.$Export(Class<?>, HttpServletResponse)构造器初始化参数。");
         }
 
     }

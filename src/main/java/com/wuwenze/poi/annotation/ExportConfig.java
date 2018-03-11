@@ -59,8 +59,8 @@ public @interface ExportConfig {
 	 * 1. 固定的数值转换为字符串值（如：1代表男，2代表女）
 	 * <b>表达式:</b> "s:1=男,2=女"
 	 * 
-	 * 2. 数值对应的值需要查询数据库才能进行映射(实现org.wuwz.poi.convert.ExportConvert接口)
-	 * <b>表达式:</b> "c:org.wuwz.poi.convert.ExportConvert实现类"
+	 * 2. 数值对应的值需要查询数据库才能进行映射(实现com.wuwenze.poi.convert.ExportConvert接口)
+	 * <b>表达式:</b> "c:com.wuwenze.poi.convert.ExportConvert实现类"
 	 * </pre>
 	 * @return 默认不启用
 	 */
@@ -84,7 +84,7 @@ public @interface ExportConfig {
 
 	/**
 	 * 设置单元格数据验证（下拉框）
-	 * <b>表达式:</b> "c:org.wuwz.poi.convert.ExportRange实现类"
+	 * <b>表达式:</b> "c:com.wuwenze.poi.convert.ExportRange实现类"
 	 * @return 默认不启用
 	 */
 	String range() default  "" ;

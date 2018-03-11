@@ -121,7 +121,7 @@
 	
 2. 数值对应的值需要查询数据库才能进行映射 (用的机会不多,一般这种情况直接在DAO处理)
 
-   需要实现org.wuwz.poi.convert.ExportConvert接口
+   需要实现com.wuwenze.poi.convert.ExportConvert接口
    
    表达式: ```"c:com.wuwenze.poi.test.convert.GradeIdConvert"```
 	
