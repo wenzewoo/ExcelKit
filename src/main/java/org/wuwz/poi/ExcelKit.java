@@ -76,7 +76,8 @@ public class ExcelKit {
     // 分Sheet机制：每个Sheet最多多少条数据
     private Integer mMaxSheetRecords = 10000;
     // 缓存数据格式器实例,避免多次使用反射进行实例化
-    private Map<String, ExportConvert> mConvertInstanceCache = new HashMap<String, ExportConvert>();
+    private static Map<String, ExportConvert> mConvertInstanceCache = new HashMap<String, ExportConvert>();
+    private static Map<String, ExportRange> mRangeInstanceCache = new HashMap<String, ExportRange>();
 
     protected ExcelKit() {
     }
@@ -294,7 +295,7 @@ public class ExcelKit {
 
                         // 格式化单元格值
                         if (!"".equals(exportItems.get(j).getConvert())) {
-                            cellValue = convertCellValue(Integer.parseInt(cellValue), exportItems.get(j).getConvert());
+                            cellValue = convertCellValue(cellValue, exportItems.get(j).getConvert());
                         }
 
                         // 单元格宽度
@@ -341,12 +342,12 @@ public class ExcelKit {
      * @param handler
      *            数据处理回调
      */
-
-    //TODO 第一列不能出现空值！！！！！！！
     public void readExcel(File excelFile, ReadHandler handler) {
+        // TODO 第一列不能出现空值！！！！！！！
         this.readExcel(excelFile, -1, handler);
     }
- /**
+
+    /**
      * 读取Excel数据(使用SAX的方式进行解析,读取所有Sheet数据)
      *
      * @param is
@@ -367,8 +368,8 @@ public class ExcelKit {
      * @param handler
      *            数据处理回调
      */
-    //TODO 第一列不能出现空值！！！！！！！
     public void readExcel(InputStream is,String fileName,int sheetIndex,ReadHandler handler) {
+        // TODO 第一列不能出现空值！！！！！！！
         long begin = System.currentTimeMillis();
         XlsxReader reader = new XlsxReader(handler).setEmptyCellValue(mEmptyCellValue);
         try {
@@ -415,23 +416,22 @@ public class ExcelKit {
         log.info(String.format("Excel读取并处理完成,耗时：%s seconds.", (System.currentTimeMillis() - begin) / 1000F));
     }
 
-    // convertCellValue: number to String (beta)
-    private String convertCellValue(Integer oldValue, String format) {
+    private String convertCellValue(String oldValue, String format) {
         try {
             String protocol = format.split(":")[0];
 
             // 键值对字符串解析：s:1=男,2=女
             if ("s".equalsIgnoreCase(protocol)) {
+                Integer oldIntValue = Integer.parseInt(oldValue);
 
                 String[] pattern = format.split(":")[1].split(",");
                 for (String p : pattern) {
                     String[] cp = p.split("=");
 
-                    if (Integer.parseInt(cp[0]) == oldValue) {
+                    if (Integer.parseInt(cp[0]) == oldIntValue) {
                         return cp[1];
                     }
                 }
-
             }
             // 使用处理类进行处理：c:org.wuwz.poi.test.GradeCellFormat
             if ("c".equalsIgnoreCase(protocol)) {
@@ -446,12 +446,14 @@ public class ExcelKit {
                 if (mConvertInstanceCache.size() > 10)
                     mConvertInstanceCache.clear();
 
-                return export.handler(oldValue);
+                if(export != null) {
+                    return export.handler(oldValue);
+                }
             }
         } catch (Exception e) {
             log.error("出现问题,可能是@ExportConfig.format()的值不规范导致。", e);
         }
-        return String.valueOf(oldValue);
+        return oldValue;
     }
 
     // 填充下拉数据验证(maxcess)
@@ -460,10 +462,18 @@ public class ExcelKit {
             String protocol = format.split(":")[0];
             if ("c".equalsIgnoreCase(protocol)) {
                 String clazz = format.split(":")[1];
-                ExportRange export = (ExportRange) Class.forName(clazz).newInstance();
+                ExportRange range = mRangeInstanceCache.get(clazz);
 
-                if (export != null) {
-                	return export.handler();
+                if (range == null) {
+                    range = (ExportRange) Class.forName(clazz).newInstance();
+                    mRangeInstanceCache.put(clazz, range);
+                }
+
+                if(mRangeInstanceCache.size() > 10)
+                    mRangeInstanceCache.clear();
+
+                if (range != null) {
+                	return range.handler();
                 }
             }
         } catch (Exception e) {

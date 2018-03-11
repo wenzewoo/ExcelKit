@@ -31,5 +31,5 @@ package org.wuwz.poi.convert;
 
 public interface ExportConvert {
 
-	String handler(Integer val);
+	String handler(Object val);
 }

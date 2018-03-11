@@ -29,7 +29,6 @@
  */
 package org.wuwz.poi.core;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -39,6 +38,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.wuwz.poi.exception.EncounterNoNeedXmlException;
 import org.wuwz.poi.hanlder.ReadHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -63,19 +63,22 @@ import java.util.List;
  */
 public class XlsxReader extends DefaultHandler {
 	private SharedStringsTable mSharedStringsTable;
-	private String mLastContents; // 上一次的内容
-	private boolean mNextIsString;// 字符串标识
+    // 上一次读取到的单元格内容
+	private String mLastContents;
+	private boolean mNextIsString;
 	private int mSheetIndex = -1;
 	private int mCurrentRowIndex = 0;
 	private int mCurrentColumnIndex = 0;
-	private boolean mIsTElement;
-	private ReadHandler mReadHandler;
+    // 当前行的数据
+    private List<String> mRowData = new ArrayList<String>();
+    // 当前行数据的处理回调
+    private ReadHandler mReadHandler;
+
 	private short mFormatIndex;
 	private String mFormatString;
 	private StylesTable mStylesTable;
 	private CellValueType mNextDataType = CellValueType.STRING;
 	private final DataFormatter mFormatter = new DataFormatter();
-	private List<String> mRowData = new ArrayList<String>();
 
 	// 定义前一个元素和当前元素的位置，用来计算其中空的单元格数量，如A6和A8等
 	private String mPreviousRef = null, mCurrentRef = null;
@@ -107,7 +110,7 @@ public class XlsxReader extends DefaultHandler {
 	}
 
 	private void processAll(OPCPackage pkg)
-			throws IOException, OpenXML4JException, InvalidFormatException, SAXException {
+			throws IOException, OpenXML4JException, SAXException {
 		XSSFReader xssfReader = new XSSFReader(pkg);
 		mStylesTable = xssfReader.getStylesTable();
 		SharedStringsTable sst = xssfReader.getSharedStringsTable();
@@ -153,7 +156,7 @@ public class XlsxReader extends DefaultHandler {
 	}
 
 	private void processBySheet(int sheetIndex, OPCPackage pkg)
-			throws IOException, OpenXML4JException, InvalidFormatException, SAXException {
+			throws IOException, OpenXML4JException, SAXException {
 		XSSFReader r = new XSSFReader(pkg);
 		SharedStringsTable sst = r.getSharedStringsTable();
 
@@ -164,7 +167,15 @@ public class XlsxReader extends DefaultHandler {
 		InputStream sheet = r.getSheet("rId" + (sheetIndex + 1));
 		mSheetIndex++;
 		InputSource sheetSource = new InputSource(sheet);
-		parser.parse(sheetSource);
+
+		// fix by: OneToOne@https://gitee.com/zhu2chu
+		try {
+            parser.parse(sheetSource);
+        } catch (EncounterNoNeedXmlException e) {
+            sheet = r.getSheet("rId"+(sheetIndex + 3));
+            sheetSource = new InputSource(sheet); parser.parse(sheetSource);
+        }
+
 		sheet.close();
 		pkg.close();
 	}
@@ -219,8 +230,7 @@ public class XlsxReader extends DefaultHandler {
 		} else if ("str".equals(cellType)) {
 			mNextDataType = CellValueType.FORMULA;
 		}
-		//TODO: 日期类型的判断
-
+		//TODO: 日期类型的处理
 		if (cellStyleStr != null) {
 			int styleIndex = Integer.parseInt(cellStyleStr);
 			XSSFCellStyle style = mStylesTable.getStyleAt(styleIndex);
@@ -288,6 +298,9 @@ public class XlsxReader extends DefaultHandler {
 	
 	@Override
 	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+		// fix by: OneToOne@https://gitee.com/zhu2chu
+		if ("sst".equals(name) || "styleSheet".equals(name)) { throw new EncounterNoNeedXmlException(); }
+
 		// c => 单元格
 		if ("c".equals(name)) {
 			// 设定单元格类型
@@ -301,8 +314,6 @@ public class XlsxReader extends DefaultHandler {
 			String cellType = attributes.getValue("t");
 			mNextIsString = (cellType != null && cellType.equals("s"));
 		}
-		mIsTElement = "t".equals(name);
-
 		mLastContents = "";
 	}
 	@Override
@@ -315,13 +326,8 @@ public class XlsxReader extends DefaultHandler {
 			mNextIsString = false;
 		}
 
-		// t元素也包含字符串
-		if (mIsTElement) {
-			String value = mLastContents.trim();
-			mRowData.add(mCurrentColumnIndex, value);
-			mCurrentColumnIndex++;
-			mIsTElement = false;
-		} else if ("c".equals(name)) {
+		// 处理单元格数据
+        if ("c".equals(name)) {
 			String value = this.getDataValue(mLastContents.trim(), "");
 
 			// 补全单元格之间的空单元格 mCurrentRef 和 mPreviousRef 差距超过2
@@ -329,13 +335,14 @@ public class XlsxReader extends DefaultHandler {
 				for (int i = 0; i < countNullCell(mCurrentRef, mPreviousRef); i++) {
 					mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
 					mCurrentColumnIndex++;
+                    System.out.println("c: add :" + mCurrentColumnIndex + ", " + mEmptyCellValue);
 				}
 			}
 
 			mRowData.add(mCurrentColumnIndex, value);
 			mCurrentColumnIndex++;
 		}
-		// 如果标签名称为 row ，这说明已到行尾，调用 optRows() 方法
+		// 如果标签名称为 row ，这说明已到行尾，通知回调处理当前行的数据
 		else if("row".equals(name)) {
 			// 默认第一行为表头，以该行单元格数目为最大数目
 			if (mCurrentRowIndex == 0) {

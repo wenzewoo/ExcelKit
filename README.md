@@ -5,10 +5,21 @@
 
 
 # 更新日志：
+*   2018-03-11 (version: 2.0.6)：
+
+    1. 修复导出文件后再读取该文件的数据错乱问题(数据翻倍). 
+    
+    2. 修复导出文件后再使用指定sheetIndex读取不到数据的问题 (感谢@OneToOne)
+    
+    3. convert转换器oldValue数据类型更改为Object, 用于支持其他类型的转换
+    
+    4. 提供完整的导出导入示例, 包含数据校验, 错误消息获取(详见: /src/test/java/...)
+    
+    5. 待解决: Maven中心仓库上传jar包不完整的问题(目前还没找到原因, 可能要换个账号发布了...)
 
 *   2017-12-28：修复大文件excel内容错误问题, 取消字体颜色设置, 提升文件导出效率.
 
-*   2017-9-14：下拉框，流上传，行尾空单元格，导出单元格格式（maxcess）
+*   2017-9-14：下拉框，流上传，行尾空单元格，导出单元格格式（感谢@maxcess）
 
 *   2017-9-11：修复：补全行尾可能缺失的单元格，待修复: 补全行首可能缺失的单元格
 
@@ -28,9 +39,13 @@
 > 使用``` jdk1.6.0_45 ``` 和```maven-3.2.5```进行项目构建,理论上支持```jdk6+```。
 
 # 使用效果：
-> ExcelKit-Example完整示例程序 ([https://github.com/wuwz/ExcelKit-Example][1])
+> 示例代码见: \ExcelKit\src\test\java\org\wuwz\poi\test\Demo.java
 
-![image](https://raw.githubusercontent.com/wuwz/ExcelKit-Example/master/example.gif)
+#### WEB环境下的导入导出
+![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example1.gif)
+
+#### 极端环境下的性能测试(可用内存12m, 执行导出和导入操作)
+![image](https://raw.githubusercontent.com/wuwz/ExcelKit/master/example2.gif)
 
 # 如何使用？
 
@@ -44,7 +59,7 @@
     <dependency>
         <groupId>org.wuwz</groupId>
         <artifactId>ExcelKit</artifactId>
-        <version>2.0.5</version>
+        <version>2.0.6</version>
         //(近期由于中央Maven仓库上传数次皆不完整，请clone本项目后install到本地使用，后续版本解决后启用)
     </dependency>
 ```
@@ -81,7 +96,7 @@
 	    @ExportConfig(value = "性别", width = 50, convert = "s:1=男,2=女")
 	    private Integer sex;
 	
-	    @ExportConfig(value = "年级", convert = "c:org.wuwz.poi.test.GradeIdConvert")
+	    @ExportConfig(value = "年级", convert = "c:org.wuwz.poi.test.convert.GradeIdConvert")
 	    private Integer gradeId;
 	    
 	    @ExportConfig(value = "下拉框", range="c:examples.RangeConvert")
@@ -108,7 +123,7 @@
 
    需要实现org.wuwz.poi.convert.ExportConvert接口
    
-   表达式: ```"c:org.wuwz.poi.test.GradeIdConvert"```
+   表达式: ```"c:org.wuwz.poi.test.convert.GradeIdConvert"```
 	
 
 ``` java
