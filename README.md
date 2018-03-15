@@ -5,6 +5,15 @@
 
 
 # 更新日志：
+*   2018-03-15 (version: 2.0.6)： 已经发布到Maven中央仓库(注意: GroupId以及包名修改为com.wuwenze), 等待中央仓库同步中..
+``` xml
+    <dependency>
+        <groupId>com.wuwenze</groupId>
+        <artifactId>ExcelKit</artifactId>
+        <version>2.0.6</version>
+    </dependency>
+```
+
 *   2018-03-11 (version: 2.0.6)：
 
     1. 修复导出文件后再读取该文件的数据错乱问题(数据翻倍). 
@@ -60,7 +69,6 @@
         <groupId>com.wuwenze</groupId>
         <artifactId>ExcelKit</artifactId>
         <version>2.0.6</version>
-        //(近期由于中央Maven仓库上传数次皆不完整，请clone本项目后install到本地使用，后续版本解决后启用)
     </dependency>
 ```
 
