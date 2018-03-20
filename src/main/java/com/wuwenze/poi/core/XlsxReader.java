@@ -159,7 +159,7 @@ public class XlsxReader extends DefaultHandler {
 			throws IOException, OpenXML4JException, SAXException {
 		XSSFReader r = new XSSFReader(pkg);
 		SharedStringsTable sst = r.getSharedStringsTable();
-
+ 		mStylesTable =  r.getStylesTable();
 		XMLReader parser = fetchSheetParser(sst);
 
 		// rId2 found by processing the Workbook
