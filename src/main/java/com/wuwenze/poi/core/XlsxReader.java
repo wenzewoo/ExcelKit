@@ -29,6 +29,7 @@
  */
 package com.wuwenze.poi.core;
 
+import com.wuwenze.poi.ExcelKit;
 import com.wuwenze.poi.hanlder.ReadHandler;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -355,7 +356,7 @@ public class XlsxReader extends DefaultHandler {
 				}
 			}
 
-			if (!mRowData.isEmpty()) {
+			if (!ExcelKit.isNullRowValue(mRowData)) {
 				mReadHandler.handler(mSheetIndex, mCurrentRowIndex, mRowData);
 			}
 			mRowData.clear();

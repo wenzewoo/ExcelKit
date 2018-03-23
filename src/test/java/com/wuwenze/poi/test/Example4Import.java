@@ -31,9 +31,6 @@ public class Example4Import {
                 // 跳过标题列
                 if (rowIndex == 0) return;
 
-                // 跳过空行, 类似 null,null,null,null,null
-                if (ExcelKit.isNullRowValue(row)) return;
-
                 // 验证行数据是否符合规范
                 if (validRow(sheetIndex, rowIndex, row)) {
                     // 解析数据
