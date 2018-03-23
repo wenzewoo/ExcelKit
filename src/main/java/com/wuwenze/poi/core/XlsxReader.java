@@ -335,7 +335,6 @@ public class XlsxReader extends DefaultHandler {
 				for (int i = 0; i < countNullCell(mCurrentRef, mPreviousRef); i++) {
 					mRowData.add(mCurrentColumnIndex, mEmptyCellValue);
 					mCurrentColumnIndex++;
-                    System.out.println("c: add :" + mCurrentColumnIndex + ", " + mEmptyCellValue);
 				}
 			}
 

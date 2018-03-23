@@ -496,4 +496,33 @@ public class ExcelKit {
 
     }
 
+
+    /**
+     * 判断一个单元格的值是否是空值
+     * @param cellValue 单元格值
+     * @return TRUE / FALSE
+     */
+    public static boolean isNullCellValue(String cellValue) {
+        return null == cellValue || "".equals(cellValue) || "null".equalsIgnoreCase(cellValue);
+    }
+
+    /**
+     * 判断整行数据是否都为空
+     * @param rowData 行数据
+     * @return TRUE / FALSE
+     */
+    public static boolean isNullRowValue(List<String> rowData) {
+        if (rowData == null || rowData.size() == 0) {
+            return true;
+        }
+
+        int nullCellValueCount = 0;
+        for (String cellValue : rowData) {
+            if (isNullCellValue(cellValue)) {
+                nullCellValueCount ++;
+            }
+        }
+        return nullCellValueCount == rowData.size();
+    }
+
 }
