@@ -133,7 +133,7 @@ public class ExcelMappingFactory {
                 Validator validator =
                         excelField.validator().equals(ExcelField.DefaultAnnotation.class) ? null
                                 : excelField.validator().newInstance();
-                excelMappingProperty = new ExcelProperty().builder()
+                excelMappingProperty = ExcelProperty.builder()
                         .name(ValidatorUtil.isEmpty(excelField.name()) ? field.getName() : excelField.name())
                         .required(excelField.required())
                         .column(ValidatorUtil.isEmail(excelField.value()) ? field.getName() : excelField.value())
