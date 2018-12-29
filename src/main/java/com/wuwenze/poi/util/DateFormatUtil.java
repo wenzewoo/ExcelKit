@@ -36,7 +36,9 @@ public class DateFormatUtil {
 
                         @Override
                         public SimpleDateFormat load(String pattern) {
-                            return new SimpleDateFormat(pattern);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+                            dateFormat.setLenient(true);
+                            return dateFormat;
                         }
                     });
 
