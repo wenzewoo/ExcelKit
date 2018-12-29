@@ -435,7 +435,7 @@ public class ExcelXlsxReader extends DefaultHandler {
             }
         } else if (null != readConverter) {
             try {
-                return buildCheckAndConvertPropertyRetMap(cellIndex, property, readConverter.convert(property), null);
+                return buildCheckAndConvertPropertyRetMap(cellIndex, property, readConverter.convert(propertyValue), null);
             } catch (ExcelKitReadConverterException e) {
                 return buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, e.getMessage());
             }
