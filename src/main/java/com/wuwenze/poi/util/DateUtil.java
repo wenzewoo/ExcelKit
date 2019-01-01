@@ -24,8 +24,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class DateFormatUtil {
-    private DateFormatUtil() {
+public class DateUtil {
+    private DateUtil() {
     }
 
     public final static SimpleDateFormat ENGLISH_LOCAL_DF = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);

@@ -79,7 +79,7 @@ public @interface ExcelField {
     /**
      * @return 下拉框数据源, 生成模板和验证数据时生效
      */
-    Class<? extends Options> options() default DefaultAnnotation.class;
+    Class<? extends Options> options() default Void.class;
 
     /**
      * 写入内容转换表达式 (如: 1=男,2=女), 与 writeConverter 二选一(优先级0)
@@ -95,7 +95,7 @@ public @interface ExcelField {
      * @return 写入内容转换器
      * @see ExcelField#writeConverterExp()
      */
-    Class<? extends WriteConverter> writeConverter() default DefaultAnnotation.class;
+    Class<? extends WriteConverter> writeConverter() default Void.class;
 
     /**
      * 读取内容转表达式 (如: 男=1,女=2), 与 readConverter 二选一(优先级0)
@@ -111,7 +111,7 @@ public @interface ExcelField {
      * @return 读取内容转换器
      * @see ExcelField#readConverterExp()
      */
-    Class<? extends ReadConverter> readConverter() default DefaultAnnotation.class;
+    Class<? extends ReadConverter> readConverter() default Void.class;
 
     /**
      * 正则表达式, 读取时生效, 与 validator 二选一(优先级0)
@@ -135,9 +135,9 @@ public @interface ExcelField {
      * @return 自定义验证器
      * @see ExcelField#regularExp()
      */
-    Class<? extends Validator> validator() default DefaultAnnotation.class;
+    Class<? extends Validator> validator() default Void.class;
 
-    class DefaultAnnotation implements Options, ReadConverter, WriteConverter, Validator {
+    class Void implements Options, ReadConverter, WriteConverter, Validator {
 
         @Override
         public String[] get() {

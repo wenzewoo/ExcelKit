@@ -122,16 +122,16 @@ public class ExcelMappingFactory {
         for (Field field : fields) {
             ExcelField excelField = field.getAnnotation(ExcelField.class);
             if (null != excelField) {
-                Options options = excelField.options().equals(ExcelField.DefaultAnnotation.class) ? null
+                Options options = excelField.options().equals(ExcelField.Void.class) ? null
                         : excelField.options().newInstance();
                 WriteConverter writeConverter =
-                        excelField.writeConverter().equals(ExcelField.DefaultAnnotation.class) ? null
+                        excelField.writeConverter().equals(ExcelField.Void.class) ? null
                                 : excelField.writeConverter().newInstance();
                 ReadConverter readConverter =
-                        excelField.readConverter().equals(ExcelField.DefaultAnnotation.class) ? null
+                        excelField.readConverter().equals(ExcelField.Void.class) ? null
                                 : excelField.readConverter().newInstance();
                 Validator validator =
-                        excelField.validator().equals(ExcelField.DefaultAnnotation.class) ? null
+                        excelField.validator().equals(ExcelField.Void.class) ? null
                                 : excelField.validator().newInstance();
                 excelMappingProperty = ExcelProperty.builder()
                         .name(ValidatorUtil.isEmpty(excelField.name()) ? field.getName() : excelField.name())

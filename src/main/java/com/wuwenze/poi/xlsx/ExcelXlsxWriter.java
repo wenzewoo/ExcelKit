@@ -19,7 +19,7 @@ import com.wuwenze.poi.convert.WriteConverter;
 import com.wuwenze.poi.exception.ExcelKitException;
 import com.wuwenze.poi.pojo.ExcelMapping;
 import com.wuwenze.poi.pojo.ExcelProperty;
-import com.wuwenze.poi.util.DateFormatUtil;
+import com.wuwenze.poi.util.DateUtil;
 import com.wuwenze.poi.util.POIUtil;
 import com.wuwenze.poi.util.ValidatorUtil;
 
@@ -54,35 +54,42 @@ public class ExcelXlsxWriter {
         this.mMaxSheetRecords = maxSheetRecords;
     }
 
+    /**
+     * 构建xlsxWorkbook对象
+     * @param data 数据集
+     * @param isTemplate 是否是导出模板
+     * @return SXSSFWorkbook
+     */
     public SXSSFWorkbook generateXlsxWorkbook(List<?> data, boolean isTemplate) {
         SXSSFWorkbook workbook = POIUtil.newSXSSFWorkbook();
         List<ExcelProperty> propertyList = mExcelMapping.getPropertyList();
         if (isTemplate) {
-            SXSSFSheet sheet = generateXlsxHeader(workbook, propertyList, mExcelMapping.getName(), true);
+            // 构建导出模板
+            SXSSFSheet sheet = this.generateXlsxHeader(workbook, propertyList, mExcelMapping.getName(), true);
             if (null != data && data.size() > 0) {
                 for (int i = 1; i <= data.size(); i++) {
                     SXSSFRow bodyRow = POIUtil.newSXSSFRow(sheet, i);
                     for (int j = 0; j < propertyList.size(); j++) {
                         SXSSFCell cell = POIUtil.newSXSSFCell(bodyRow, j);
-                        buildCellValueByExcelProperty(cell, data.get(i - 1), propertyList.get(j));
+                        this.buildCellValueByExcelProperty(cell, data.get(i - 1), propertyList.get(j));
                     }
                 }
             }
-        } else {
-            // TODO: 此处有BUG，丢失最后sheet页数据
-            double sheetNo = Math.ceil(data.size() / mMaxSheetRecords);
-            for (int index = 0; index <= (sheetNo == 0.0 ? sheetNo : sheetNo - 1); index++) {
-                String sheetName = mExcelMapping.getName() + (index == 0 ? "" : "_" + index);
-                SXSSFSheet sheet = generateXlsxHeader(workbook, propertyList, sheetName, false);
-                if (null != data && data.size() > 0) {
-                    int startNo = index * mMaxSheetRecords;
-                    int endNo = Math.min(startNo + mMaxSheetRecords, data.size());
-                    for (int i = startNo; i < endNo; i++) {
-                        SXSSFRow bodyRow = POIUtil.newSXSSFRow(sheet, i + 1 - startNo);
-                        for (int j = 0; j < propertyList.size(); j++) {
-                            SXSSFCell cell = POIUtil.newSXSSFCell(bodyRow, j);
-                            buildCellValueByExcelProperty(cell, data.get(i), propertyList.get(j));
-                        }
+            return workbook;
+        }
+        // 多Sheet数据导出
+        double sheetNo = Math.ceil(data.size() / (double) mMaxSheetRecords);
+        for (int index = 0; index <= (sheetNo == 0.0 ? sheetNo : sheetNo - 1); index++) {
+            String sheetName = mExcelMapping.getName() + (index == 0 ? "" : "_" + index);
+            SXSSFSheet sheet = this.generateXlsxHeader(workbook, propertyList, sheetName, false);
+            if (null != data && data.size() > 0) {
+                int startNo = index * mMaxSheetRecords;
+                int endNo = Math.min(startNo + mMaxSheetRecords, data.size());
+                for (int i = startNo; i < endNo; i++) {
+                    SXSSFRow bodyRow = POIUtil.newSXSSFRow(sheet, i + 1 - startNo);
+                    for (int j = 0; j < propertyList.size(); j++) {
+                        SXSSFCell cell = POIUtil.newSXSSFCell(bodyRow, j);
+                        this.buildCellValueByExcelProperty(cell, data.get(i), propertyList.get(j));
                     }
                 }
             }
@@ -117,7 +124,7 @@ public class ExcelXlsxWriter {
                     cell.setCellComment(cellComment);
                 }
             }
-            cell.setCellStyle(getHeaderCellStyle(workbook));
+            cell.setCellStyle(this.getHeaderCellStyle(workbook));
             String headerColumnValue = property.getColumn();
             if (isTemplate && null != property.getRequired() && property.getRequired()) {
                 headerColumnValue = (headerColumnValue + "[*]");
@@ -138,11 +145,11 @@ public class ExcelXlsxWriter {
             String dateFormat = property.getDateFormat();
             if (!ValidatorUtil.isEmpty(dateFormat)) {
                 if (cellValue instanceof Date) {
-                    cell.setCellValue(DateFormatUtil.format(dateFormat, (Date) cellValue));
+                    cell.setCellValue(DateUtil.format(dateFormat, (Date) cellValue));
                 } else if (cellValue instanceof String) {
                     try {
-                        Date parse = DateFormatUtil.ENGLISH_LOCAL_DF.parse((String) cellValue);
-                        cell.setCellValue(DateFormatUtil.format(dateFormat, parse));
+                        Date parse = DateUtil.ENGLISH_LOCAL_DF.parse((String) cellValue);
+                        cell.setCellValue(DateUtil.format(dateFormat, parse));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -167,6 +174,7 @@ public class ExcelXlsxWriter {
     }
 
     private CellStyle mHeaderCellStyle = null;
+
     public CellStyle getHeaderCellStyle(SXSSFWorkbook wb) {
         if (null == mHeaderCellStyle) {
             mHeaderCellStyle = wb.createCellStyle();
@@ -184,7 +192,7 @@ public class ExcelXlsxWriter {
             // 应用标题字体到标题样式
             mHeaderCellStyle.setFont(font);
             //设置单元格文本形式
-            DataFormat dataFormat =  wb.createDataFormat();
+            DataFormat dataFormat = wb.createDataFormat();
             mHeaderCellStyle.setDataFormat(dataFormat.getFormat("@"));
         }
         return mHeaderCellStyle;

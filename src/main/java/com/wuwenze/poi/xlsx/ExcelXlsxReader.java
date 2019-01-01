@@ -28,7 +28,7 @@ import com.wuwenze.poi.pojo.ExcelErrorField;
 import com.wuwenze.poi.pojo.ExcelMapping;
 import com.wuwenze.poi.pojo.ExcelProperty;
 import com.wuwenze.poi.util.Const;
-import com.wuwenze.poi.util.DateFormatUtil;
+import com.wuwenze.poi.util.DateUtil;
 import com.wuwenze.poi.util.POIUtil;
 import com.wuwenze.poi.util.ReflectionUtil;
 import com.wuwenze.poi.util.RegexUtil;
@@ -93,11 +93,6 @@ public class ExcelXlsxReader extends DefaultHandler {
         this.mExcelReadHandler = excelReadHandler;
     }
 
-    /*public ExcelXlsxReader setEmptyCellValue(Object emptyCellValue) {
-        this.mEmptyCellValue = emptyCellValue;
-        return this;
-    }*/
-
     public void process(String fileName) throws ExcelKitException {
         try {
             processAll(OPCPackage.open(fileName));
@@ -155,7 +150,6 @@ public class ExcelXlsxReader extends DefaultHandler {
 
         XMLReader parser = fetchSheetParser(sst);
 
-        // rId2 found by processing the Workbook
         // 根据 rId# 或 rSheet# 查找sheet
         InputStream sheet = r.getSheet(Const.SAX_RID_PREFIX + (sheetIndex + 1));
         mCurrentSheetIndex++;
@@ -163,7 +157,7 @@ public class ExcelXlsxReader extends DefaultHandler {
         try {
             parser.parse(sheetSource);
         } catch (ExcelKitEncounterNoNeedXmlException e) {
-            sheet = r.getSheet( Const.SAX_RID_PREFIX + (sheetIndex + 3));
+            sheet = r.getSheet(Const.SAX_RID_PREFIX + (sheetIndex + 3));
             sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
         }
@@ -317,7 +311,7 @@ public class ExcelXlsxReader extends DefaultHandler {
                 mExcelRowObjectData.add(i, mEmptyCellValue);
             }
 
-            if (!rowObjectDataIsAllEmptyCellValue()) {
+            if (!this.rowObjectDataIsAllEmptyCellValue()) {
                 Object entity = mEntityClass.newInstance();
                 List<ExcelErrorField> errorFields = Lists.newArrayList();
                 for (int i = 0; i < propertyList.size(); i++) {
@@ -347,7 +341,7 @@ public class ExcelXlsxReader extends DefaultHandler {
             if ((null == excelRowObjectData) //
                     || excelRowObjectData.equals(mEmptyCellValue) //
                     || ValidatorUtil.isEmpty((String) excelRowObjectData)) {
-                emptyObjectCount ++;
+                emptyObjectCount++;
             }
         }
         return emptyObjectCount == mExcelRowObjectData.size();
@@ -376,7 +370,7 @@ public class ExcelXlsxReader extends DefaultHandler {
         String dateFormat = property.getDateFormat();
         if (!ValidatorUtil.isEmpty(dateFormat)) {
             try {
-                Date newPropertyValue = DateFormatUtil.parse(dateFormat, propertyValue);
+                Date newPropertyValue = DateUtil.parse(dateFormat, propertyValue);
                 return buildCheckAndConvertPropertyRetMap(cellIndex, property, newPropertyValue, null);
             } catch (Exception e) {
                 return buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, "时间格式解析失败 [" + dateFormat + "]");

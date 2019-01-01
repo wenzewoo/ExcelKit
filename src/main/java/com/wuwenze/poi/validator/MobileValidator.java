@@ -23,9 +23,9 @@ import com.wuwenze.poi.util.ValidatorUtil;
  */
 public class MobileValidator implements Validator {
 
-  @Override
-  public String valid(Object value) {
-    String valueString = (String) value;
-    return ValidatorUtil.isMobile(valueString) ? null : "[" + valueString + "]不是正确的手机号码.";
-  }
+    @Override
+    public String valid(Object value) {
+        String valueString = (String) value;
+        return ValidatorUtil.isMobile(valueString) ? null : "[" + valueString + "]不是正确的手机号码.";
+    }
 }
