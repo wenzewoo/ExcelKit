@@ -14,9 +14,6 @@
 ```
 
 ## 示例
-
-> 完整示例项目: https://gitee.com/wuwenze/ExcelKit-Examples
-
 ### 1. ExcelMapping
 
 > 现支持两种配置方式: 注解 或者 XML
@@ -77,7 +74,6 @@ public class User {
 
 > XML 配置方式, 需将 xml 文件放置在classpath:excel-mapping/{entityClassName}.xml
 
-> 实体类无侵入
 ```java
 @Data
 @Builder
