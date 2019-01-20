@@ -128,8 +128,64 @@ public class User2 {
 ```
 以上两种方式2选一即可, ExcelKit 会优先装载 XML 配置文件.
 
+### 2. 实现相关的转换器
+> 通过实现`com.wuwenze.poi.config.Options`自定义导入模板的下拉框数据源。
 
-### 2. 一行代码构建 Excel 导入模板
+```java
+public class SexOptions implements Options {
+
+  @Override
+  public String[] get() {
+    return new String[]{"男", "女", "未知"};
+  }
+}
+```
+
+> 通过实现`com.wuwenze.poi.validator.Validator`自定义单元格导入时的验证规则。
+```java
+public class UsernameValidator implements Validator {
+  final List<String> ERROR_USERNAME_LIST = Lists.newArrayList(
+      "admin", "root", "master", "administrator", "sb"
+  );
+
+  @Override
+  public String valid(Object o) {
+    String username = (String) o;
+    if (username.length() > 12) {
+      return "用户名不能超过12个字符。";
+    }
+
+    if (ERROR_USERNAME_LIST.contains(username)) {
+      return "用户名非法，不允许使用。";
+    }
+    return null;
+  }
+}
+```
+
+> 实现`com.wuwenze.poi.convert.WriteConverter`以及`com.wuwenze.poi.convert.ReadConverter`单元格读写转换器。
+```java
+public class CustomizeFieldReadConverter implements ReadConverter {
+
+  @Override
+  public Object convert(Object o) throws ExcelKitReadConverterException {
+    // 读文件时，将字符串转数字
+    return 0;
+  }
+}
+public class CustomizeFieldWriteConverter implements WriteConverter {
+
+  @Override
+  public String convert(Object o) throws ExcelKitWriteConverterException {
+    // 写文件时，将数字转字符串
+
+    return "test";
+  }
+}
+```
+
+
+### 3. 一行代码构建 Excel 导入模板
 > 使用 ExcelKit 提供的API 构建导入模板, 会根据配置生成批注, 下拉框等
 ``` java
 // 生成导入模板（含3条示例数据）
@@ -140,7 +196,7 @@ public void downTemplate(HttpServletResponse response) {
 }
 ```
 
-### 3. 执行文件导入
+### 4. 执行文件导入
 > 使用边读边处理的方式, 无需担心内存溢出, 也不用理会 Excel 文件到底有多大.
 
 ``` java
@@ -154,12 +210,12 @@ public ResponseEntity<?> importUser(@RequestParam MultipartFile file)
 
         @Override
         public void onSuccess(int sheetIndex, int rowIndex, User entity) {
-          userList.add(entity);
+          userList.add(entity); // 单行读取成功，加入入库队列。
         }
 
         @Override
         public void onError(int sheetIndex, int rowIndex, List<ExcelErrorField> errorFields) {
-          errorMap.put(rowIndex, errorFields);
+          errorMap.put(rowIndex, errorFields); // 读取数据失败，记录了当前行所有失败的数据
         }
       });
 
@@ -170,7 +226,7 @@ public ResponseEntity<?> importUser(@RequestParam MultipartFile file)
 }
 ```
 
-### 4. 一行代码执行 Excel 批量导出.
+### 5. 一行代码执行 Excel 批量导出.
 > 基于 Apache POI SXSSF 系列API实现导出, 大幅优化导出性能.
 
 ``` java
