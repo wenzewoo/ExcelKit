@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@ public interface Options {
 
   /**
    * 指定excel单元格的下拉框数据源, 用于规范生成Excel模板的数据校验
+   *
    * @return ["option1", "option2"]
    */
   String[] get();

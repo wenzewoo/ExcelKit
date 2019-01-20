@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,27 +13,21 @@
  * limitations under the License.
  */
 
-package com.wuwenze.poi.pojo;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+package com.wuwenze.poi.exception;
 
 /**
  * @author wuwenze
  * @date 2018/5/1
  */
-@Data
-@Builder
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-public class ExcelErrorField {
+public class ExcelKitConfigAnalyzeFailureException extends ExcelKitRuntimeException {
 
-  private Integer cellIndex;
-  private String name;
-  private String column;
-  private String errorMessage;
+  private static final long serialVersionUID = -6037535579660494996L;
+
+  public ExcelKitConfigAnalyzeFailureException(String message) {
+    super(message);
+  }
+
+  public ExcelKitConfigAnalyzeFailureException(Throwable cause) {
+    super(cause);
+  }
 }

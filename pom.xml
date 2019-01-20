@@ -9,11 +9,12 @@
   <version>2.0.7</version>
   <packaging>jar</packaging>
   <name>ExcelKit</name>
-  <url>http://github.com/wuwz/ExcelKit</url>
+  <url>http://gitee.com/wuwenze/ExcelKit</url>
   <description>Excel导入导出工具（简单、好用且轻量级的海量Excel文件导入导出解决方案.）</description>
   <developers>
     <developer>
       <name>wuwenze</name>
+      <url>https://wuwenze.com</url>
       <email>wenzewoo@gmail.com</email>
     </developer>
   </developers>
@@ -24,9 +25,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:git@github.com:wuwz/ExcelKit.git</connection>
-    <developerConnection>scm:git:git@github.com:wuwz/ExcelKit.git</developerConnection>
-    <url>git@github.com:wuwz/ExcelKit.git</url>
+    <connection>scm:git:git@gitee.com:wuwenze/ExcelKit.git</connection>
+    <developerConnection>scm:git:git@gitee.com:wuwenze/ExcelKit.git</developerConnection>
+    <url>git@gitee.com:wuwenze/ExcelKit.git</url>
   </scm>
 
   <properties>
@@ -92,7 +93,14 @@
       <artifactId>commons-beanutils</artifactId>
       <version>1.9.3</version>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -106,6 +114,7 @@
       </plugin>
     </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>jdk-profile</id>
@@ -119,5 +128,62 @@
         <maven.compiler.compilerVersion>${jdk-version}</maven.compiler.compilerVersion>
       </properties>
     </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>sonatype</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+          <id>sonatype</id>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </distributionManagement>
+    </profile>
   </profiles>
+
 </project>

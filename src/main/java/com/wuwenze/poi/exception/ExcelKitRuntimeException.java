@@ -12,28 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.wuwenze.poi.pojo;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+package com.wuwenze.poi.exception;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
+ * @date 2019/1/18
  */
-@Data
-@Builder
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
-public class ExcelErrorField {
+public class ExcelKitRuntimeException extends RuntimeException {
 
-  private Integer cellIndex;
-  private String name;
-  private String column;
-  private String errorMessage;
+  private static final long serialVersionUID = 1059413765208343152L;
+
+  public ExcelKitRuntimeException() {
+  }
+
+  public ExcelKitRuntimeException(String message) {
+    super(message);
+  }
+
+  public ExcelKitRuntimeException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public ExcelKitRuntimeException(Throwable cause) {
+    super(cause);
+  }
 }

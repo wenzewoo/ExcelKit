@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,32 +18,36 @@ package com.wuwenze.poi.util;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+/**
+ * @author wuwenze
+ * @date 2018/5/1
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RegexUtil {
-    private RegexUtil() {}
-    private final static LoadingCache<String, Pattern> mRegexPatternLoadingCache =
-            CacheBuilder.newBuilder()
-                    .maximumSize(5)
-                    .build(new CacheLoader<String, Pattern>() {
 
-                        @Override
-                        public Pattern load(String pattern) {
-                            return Pattern.compile(pattern);
-                        }
-                    });
+  private final static LoadingCache<String, Pattern> mRegexPatternLoadingCache =
+      CacheBuilder.newBuilder()
+          .maximumSize(5)
+          .build(new CacheLoader<String, Pattern>() {
 
-    public static Boolean isMatches(String pattern, Object value) {
-        try {
-            String valueString = (String) value;
-            return mRegexPatternLoadingCache.get(pattern).matcher(valueString).matches();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
+            @Override
+            public Pattern load(String pattern) {
+              return Pattern.compile(pattern);
+            }
+          });
+
+  public static Boolean isMatches(String pattern, Object value) {
+    try {
+      String valueString = (String) value;
+      return RegexUtil.mRegexPatternLoadingCache.get(pattern).matcher(valueString).matches();
+    } catch (ExecutionException e) {
+      e.printStackTrace();
     }
+    return false;
+  }
 }

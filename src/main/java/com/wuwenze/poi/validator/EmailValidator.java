@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,9 @@ import com.wuwenze.poi.util.ValidatorUtil;
  */
 public class EmailValidator implements Validator {
 
-    @Override
-    public String valid(Object value) {
-        String valueString = (String) value;
-        return ValidatorUtil.isEmail(valueString) ? null : "[" + valueString + "]不是正确的EMail.";
-    }
+  @Override
+  public String valid(Object value) {
+    String valueString = (String) value;
+    return ValidatorUtil.isEmail(valueString) ? null : "[" + valueString + "]不是正确的EMail.";
+  }
 }

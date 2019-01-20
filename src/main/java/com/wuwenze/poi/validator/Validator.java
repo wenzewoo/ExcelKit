@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +21,10 @@ package com.wuwenze.poi.validator;
  */
 public interface Validator {
 
-    /**
-     * 验证单元格的值, 若验证失败, 请返回错误消息.
-     *
-     * @param value
-     * @return null or errorMessage
-     */
-    String valid(Object value);
+  /**
+   * 验证单元格的值, 若验证失败, 请返回错误消息.
+   *
+   * @return null or errorMessage
+   */
+  String valid(Object value);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,5 +15,11 @@
 
 package com.wuwenze.poi.exception;
 
-public class ExcelKitEncounterNoNeedXmlException extends ExcelKitException {
+/**
+ * @author wuwenze
+ * @date 2018/5/1
+ */
+public class ExcelKitEncounterNoNeedXmlException extends ExcelKitRuntimeException {
+
+  private static final long serialVersionUID = 4096057792690617204L;
 }

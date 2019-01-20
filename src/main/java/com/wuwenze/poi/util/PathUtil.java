@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,25 +16,25 @@
 package com.wuwenze.poi.util;
 
 import java.io.File;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * @author wuwenze
  * @date 2018/5/1
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathUtil {
-
-  private PathUtil() {
-  }
 
   public static String getClasspath() {
     return PathUtil.class.getResource("/").getPath();
   }
 
   public static String getFilePathByClasspath(String name) {
-    return getClasspath() + name;
+    return PathUtil.getClasspath() + name;
   }
 
   public static File getFileByClasspath(String name) {
-    return new File(getFilePathByClasspath(name));
+    return new File(PathUtil.getFilePathByClasspath(name));
   }
 }

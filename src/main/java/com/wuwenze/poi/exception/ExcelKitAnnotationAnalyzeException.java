@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,13 +19,11 @@ package com.wuwenze.poi.exception;
  * @author wuwenze
  * @date 2018/5/1
  */
-public class ExcelKitAnnotationAnalyzeException extends ExcelKitException {
-  private static final long serialVersionUID = 1L;
+public class ExcelKitAnnotationAnalyzeException extends ExcelKitRuntimeException {
+
+  private static final long serialVersionUID = -7412071094510468644L;
 
   public ExcelKitAnnotationAnalyzeException(String message) {
     super(message);
-  }
-  public ExcelKitAnnotationAnalyzeException(String message, Throwable cause) {
-    super(message, cause);
   }
 }

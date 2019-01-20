@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,13 +15,16 @@
 
 package com.wuwenze.poi.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * @author wuwenze
  * @date 2018/5/1
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Const {
 
-  private Const() {}
   public static final String ENCODING = "UTF-8";
   public static final String XLSX_SUFFIX = ".xlsx";
   public static final String XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

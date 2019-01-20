@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 吴汶泽 (wuwz@live.com).
+ * Copyright (c) 2018, 吴汶泽 (wenzewoo@gmail.com).
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@ public interface WriteConverter {
 
   /**
    * 将value转换成指定的值, 用于写入excel表格中
-   * @param value
+   *
    * @return 转换后的值
    */
   String convert(Object value) throws ExcelKitWriteConverterException;
