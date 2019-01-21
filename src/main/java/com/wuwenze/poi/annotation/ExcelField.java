@@ -26,7 +26,6 @@ import java.lang.annotation.Target;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -40,7 +39,7 @@ public @interface ExcelField {
   /**
    * 属性名, 仅在复杂数据类型时配置.
    * <pre>
-   *   @ExcelField(name="user.name");
+   *   (At)ExcelField(name="user.name");
    *   private User user;
    * </pre>
    *
@@ -144,12 +143,12 @@ public @interface ExcelField {
     }
 
     @Override
-    public String convert(final Object value) {
+    public String convert(Object value) {
       return null;
     }
 
     @Override
-    public String valid(final Object value) {
+    public String valid(Object value) {
       return null;
     }
   }

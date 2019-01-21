@@ -44,7 +44,6 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 public class ExcelXlsxWriter {
 
@@ -166,6 +165,7 @@ public class ExcelXlsxWriter {
   }
 
   private CellStyle mHeaderCellStyle = null;
+
 
   public CellStyle getHeaderCellStyle(SXSSFWorkbook wb) {
     if (null == mHeaderCellStyle) {

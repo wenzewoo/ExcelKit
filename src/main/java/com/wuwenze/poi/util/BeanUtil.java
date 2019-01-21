@@ -20,7 +20,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 
-
+/**
+ * @author wuwenze
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BeanUtil extends org.apache.commons.beanutils.BeanUtils {
 

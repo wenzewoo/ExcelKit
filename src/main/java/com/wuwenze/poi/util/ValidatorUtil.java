@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidatorUtil {
@@ -39,6 +38,7 @@ public class ValidatorUtil {
   /**
    * 判断是否为浮点数或者整数
    *
+   * @param value 字符串
    * @return true Or false
    */
   public static boolean isNumeric(String value) {
@@ -49,6 +49,7 @@ public class ValidatorUtil {
   /**
    * 判断是否为正确的邮件格式
    *
+   * @param value 字符串
    * @return true Or false
    */
   public static boolean isEmail(String value) {
@@ -59,6 +60,7 @@ public class ValidatorUtil {
   /**
    * 判断字符串是否为合法手机号
    *
+   * @param value 字符串
    * @return true Or false
    */
   public static boolean isMobile(String value) {
@@ -68,6 +70,9 @@ public class ValidatorUtil {
 
   /**
    * 判断是否为数字
+   *
+   * @param value 字符串
+   * @return true Or false
    */
   public static boolean isNumber(String value) {
     try {
@@ -80,6 +85,9 @@ public class ValidatorUtil {
 
   /**
    * 判断字符串是否为空
+   *
+   * @param value 字符串
+   * @return true Or false
    */
   public static boolean isEmpty(String value) {
     return null == value || "".equals(value.trim()) || "null".equalsIgnoreCase(value.trim());

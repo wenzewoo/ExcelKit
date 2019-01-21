@@ -36,7 +36,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExcelKit {
@@ -53,7 +52,7 @@ public class ExcelKit {
   /**
    * 使用此构造器来执行浏览器导出
    *
-   * @param clazz 导出实体对象 (需 excel-mapping. xml 或 <@Excel + @ExcelField> 映射)
+   * @param clazz 导出实体对象
    * @param response 原生 response 对象, 用于响应浏览器下载
    * @return ExcelKit obj.
    * @see ExcelKit#downXlsx(List, boolean)
@@ -84,7 +83,7 @@ public class ExcelKit {
   /**
    * 使用此构造器来执行构建文件流.
    *
-   * @param clazz 导出实体对象 (需 excel-mapping. xml 或 <@Excel + @ExcelField> 映射)
+   * @param clazz 导出实体对象
    * @param outputStream 输出流
    * @return ExcelKit obj.
    * @see ExcelKit#writeXlsx(List, boolean)
@@ -108,7 +107,7 @@ public class ExcelKit {
   /**
    * 使用此构造器来执行Excel文件导入.
    *
-   * @param clazz 导出实体对象 (需 excel-mapping. xml 或 <@Excel + @ExcelField> 映射)
+   * @param clazz 导出实体对象
    * @return ExcelKit obj.
    * @see ExcelKit#readXlsx(File, Integer, ExcelReadHandler)
    * @see ExcelKit#readXlsx(InputStream, Integer, ExcelReadHandler)

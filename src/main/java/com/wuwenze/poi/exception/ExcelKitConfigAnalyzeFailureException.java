@@ -17,7 +17,6 @@ package com.wuwenze.poi.exception;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 public class ExcelKitConfigAnalyzeFailureException extends ExcelKitRuntimeException {
 

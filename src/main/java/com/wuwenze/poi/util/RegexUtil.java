@@ -25,7 +25,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RegexUtil {

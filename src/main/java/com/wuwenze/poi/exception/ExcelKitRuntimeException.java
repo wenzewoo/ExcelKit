@@ -16,7 +16,6 @@ package com.wuwenze.poi.exception;
 
 /**
  * @author wuwenze
- * @date 2019/1/18
  */
 public class ExcelKitRuntimeException extends RuntimeException {
 

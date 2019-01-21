@@ -19,7 +19,6 @@ import com.wuwenze.poi.util.ValidatorUtil;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 public class EmailValidator implements Validator {
 

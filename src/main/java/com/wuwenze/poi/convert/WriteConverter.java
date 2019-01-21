@@ -19,13 +19,13 @@ import com.wuwenze.poi.exception.ExcelKitWriteConverterException;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 public interface WriteConverter {
 
   /**
    * 将value转换成指定的值, 用于写入excel表格中
    *
+   * @param value 当前单元格的值
    * @return 转换后的值
    */
   String convert(Object value) throws ExcelKitWriteConverterException;

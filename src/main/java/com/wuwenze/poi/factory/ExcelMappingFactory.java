@@ -43,7 +43,6 @@ import org.dom4j.io.SAXReader;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExcelMappingFactory {
@@ -64,7 +63,8 @@ public class ExcelMappingFactory {
   /**
    * 获取指定实体的Excel映射信息
    *
-   * @return ExcelMapping
+   * @param clazz 实体
+   * @return ExcelMapping映射对象
    */
   public static ExcelMapping get(Class<?> clazz) {
     try {

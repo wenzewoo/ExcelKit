@@ -34,7 +34,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 /**
  * @author wuwenze
- * @date 2018/5/1
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class POIUtil {
@@ -146,11 +145,6 @@ public class POIUtil {
     return propertyValue;
   }
 
-  /**
-   * 计算两个单元格之间的单元格数目(同一行)
-   *
-   * @return int
-   */
   public static int countNullCell(String ref, String ref2) {
     // excel2007最大行数是1048576，最大列数是16384，最后一列列名是XFD
     String xfd = ref.replaceAll("\\d+", "");
