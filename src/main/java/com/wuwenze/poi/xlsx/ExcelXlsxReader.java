@@ -363,8 +363,8 @@ public class ExcelXlsxReader extends DefaultHandler {
     if (null != required && required) {
       if (null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue)
           || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue)) {
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, "单元格的值必须填写");
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, "单元格的值必须填写");
       }
     }
 
@@ -374,9 +374,8 @@ public class ExcelXlsxReader extends DefaultHandler {
       if (null != propertyValue && //
           !mEmptyCellValue.equals(propertyValue) && //
           String.valueOf(propertyValue).length() > maxLength) {
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                "超过最大长度: " + maxLength);
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, "超过最大长度: " + maxLength);
       }
     }
 
@@ -384,13 +383,12 @@ public class ExcelXlsxReader extends DefaultHandler {
     String dateFormat = property.getDateFormat();
     if (!ValidatorUtil.isEmpty(dateFormat)) {
       try {
-        Date newPropertyValue = DateUtil.parse(dateFormat, propertyValue);
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, newPropertyValue, null);
+        // 时间格式转换后，直接返回。
+        Date parseDateValue = DateUtil.parse(dateFormat, propertyValue);
+        return this.buildCheckAndConvertPropertyRetMap(cellIndex, property, parseDateValue, null);
       } catch (Exception e) {
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                "时间格式解析失败 [" + dateFormat + "]");
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, "时间格式解析失败 [" + dateFormat + "]");
       }
     }
 
@@ -407,12 +405,9 @@ public class ExcelXlsxReader extends DefaultHandler {
           }
         }
         if (!containInOptions) {
-          return ExcelXlsxReader
-              .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                  "[" + propertyValue + "]不是规定的下拉框的值");
+          return this.buildCheckAndConvertPropertyRetMap(//
+              cellIndex, property, propertyValue, "[" + propertyValue + "]不是规定的下拉框的值");
         }
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, null);
       }
     }
 
@@ -423,12 +418,9 @@ public class ExcelXlsxReader extends DefaultHandler {
         String regularExpMessage = property.getRegularExpMessage();
         String validErrorMessage = !ValidatorUtil.isEmpty(regularExpMessage) ?
             regularExpMessage : "正则表达式校验失败 [" + regularExp + "]";
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                validErrorMessage);
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, validErrorMessage);
       }
-      return ExcelXlsxReader
-          .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, null);
     }
 
     // validator
@@ -436,40 +428,36 @@ public class ExcelXlsxReader extends DefaultHandler {
     if (null != validator) {
       String validErrorMessage = validator.valid(propertyValue);
       if (null != validErrorMessage) {
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                validErrorMessage);
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, validErrorMessage);
       }
     }
 
-    // readConverterExp && readConverter
+    // readConverterExp && readConverter (按照优先级处理)
     String readConverterExp = property.getReadConverterExp();
     ReadConverter readConverter = property.getReadConverter();
     if (!ValidatorUtil.isEmpty(readConverterExp)) {
       try {
-        return ExcelXlsxReader.buildCheckAndConvertPropertyRetMap(cellIndex, property,
-            POIUtil.convertByExp(propertyValue, readConverterExp), null);
+        Object convertPropertyValue = POIUtil.convertByExp(propertyValue, readConverterExp);
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, convertPropertyValue, null);
       } catch (Exception e) {
-        String validErrorMessage = "由于readConverterExp表达式的值不规范导致转换失败";
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                validErrorMessage);
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, "由于readConverterExp表达式的值不规范导致转换失败");
       }
     } else if (null != readConverter) {
       try {
-        return ExcelXlsxReader.buildCheckAndConvertPropertyRetMap(cellIndex, property,
-            readConverter.convert(propertyValue), null);
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, readConverter.convert(propertyValue), null);
       } catch (ExcelKitReadConverterException e) {
-        return ExcelXlsxReader
-            .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue,
-                e.getMessage());
+        return this.buildCheckAndConvertPropertyRetMap(//
+            cellIndex, property, propertyValue, e.getMessage());
       }
     }
-    return ExcelXlsxReader
-        .buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, null);
+    return this.buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, null);
   }
 
-  private static Map<String, Object> buildCheckAndConvertPropertyRetMap(Integer cellIndex,
+  private Map<String, Object> buildCheckAndConvertPropertyRetMap(Integer cellIndex,
       ExcelProperty property,//
       Object propertyValue, String validErrorMessage) {
     Map<String, Object> resultMap = Maps.newHashMap();
