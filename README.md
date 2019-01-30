@@ -6,7 +6,7 @@
 <dependency>
     <groupId>com.wuwenze</groupId>
     <artifactId>ExcelKit</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.71</version>
 </dependency>
 ```
 
