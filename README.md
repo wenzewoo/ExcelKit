@@ -1,12 +1,12 @@
 # ExcelKit
 > 简单、好用且轻量级的海量Excel文件导入导出解决方案。<反馈问题微信：`unknow-uid`>
 
-## POM.xml 
+## POM.xml
 ```xml
 <dependency>
     <groupId>com.wuwenze</groupId>
     <artifactId>ExcelKit</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.71</version>
 </dependency>
 ```
 
@@ -246,7 +246,7 @@ public ResponseEntity<?> importUser(@RequestParam MultipartFile file)
 
 ![](https://cdn.cloudly.cn/img_1548047023943.png)
 
-> 部分导入失败示例（包含错误信息）：  
+> 部分导入失败示例（包含错误信息）：
 
 ![](https://cdn.cloudly.cn/img_1548047646897.png)
 
@@ -268,7 +268,7 @@ public void downXlsx(HttpServletResponse response) {
 从截图来看，性能表现还行，但需要注意的是，虽然ExcelKit针对导出做了大量优化，但导出数据也需要量力而行。
 
 ![](https://cdn.cloudly.cn/img_1548047829487.png)
-如上图所示，ExcelKit默认启用了分Sheet策略，每个Sheet最大行数50000条，可以通过`ExcelKit.setMaxSheetRecords`重新指定：  
+如上图所示，ExcelKit默认启用了分Sheet策略，每个Sheet最大行数50000条，可以通过`ExcelKit.setMaxSheetRecords`重新指定：
 ```java
 ExcelKit.$Export(User.class, response)
   .setMaxSheetRecords(1000)
