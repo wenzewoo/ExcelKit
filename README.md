@@ -1,7 +1,7 @@
 # ExcelKit
 > 简单、好用且轻量级的海量Excel文件导入导出解决方案。<反馈问题微信：`unknow-uid`>
 
-## POM.xml 
+## POM.xml
 ```xml
 <dependency>
     <groupId>com.wuwenze</groupId>
@@ -195,8 +195,8 @@ public void downTemplate(HttpServletResponse response) {
   ExcelKit.$Export(User.class, response).downXlsx(userList, true);
 }
 ```
-![](https://cdn.cloudly.cn/img_1548046747827.png)  
-![](https://cdn.cloudly.cn/img_1548046785512.png)
+![](https://cdn.nlark.com/yuque/0/2019/png/243237/1550539800515-e9714f25-e415-4e70-a4b9-2b5a229dfce0.png)  
+![](https://cdn.nlark.com/yuque/0/2019/png/243237/1550539833934-6b7b2ca8-c7a0-4872-a1a9-722fc5c403d1.png)
 
 
 ### 4. 执行文件导入
@@ -244,11 +244,11 @@ public ResponseEntity<?> importUser(@RequestParam MultipartFile file)
 
 > 全部导入成功示例：
 
-![](https://cdn.cloudly.cn/img_1548047023943.png)
+![](https://cdn.nlark.com/yuque/0/2019/png/243237/1550539857806-7dd5b511-4cfe-43f7-8d82-f76bd831e7af.png)
 
-> 部分导入失败示例（包含错误信息）：  
+> 部分导入失败示例（包含错误信息）：
 
-![](https://cdn.cloudly.cn/img_1548047646897.png)
+![](https://cdn.nlark.com/yuque/0/2019/png/243237/1550539878743-a0cc24a2-1f30-4ccc-8d14-225a3bad30f5.png)
 
 
 ### 5. 一行代码执行 Excel 批量导出.
@@ -264,13 +264,6 @@ public void downXlsx(HttpServletResponse response) {
       userList.size(), (System.currentTimeMillis() - beginMillis) / 1000L);
 }
 ```
-![](https://cdn.cloudly.cn/img_1548048139123.png)  
-从截图来看，性能表现还行，但需要注意的是，虽然ExcelKit针对导出做了大量优化，但导出数据也需要量力而行。
-
-![](https://cdn.cloudly.cn/img_1548047829487.png)
-如上图所示，ExcelKit默认启用了分Sheet策略，每个Sheet最大行数50000条，可以通过`ExcelKit.setMaxSheetRecords`重新指定：  
-```java
-ExcelKit.$Export(User.class, response)
-  .setMaxSheetRecords(1000)
-  .downXlsx(userList, false);
-```
+![](https://cdn.nlark.com/yuque/0/2019/png/243237/1550539922063-7681b3df-6ccf-4f42-939b-269c84b8f8bc.png)  
+需要注意的是，虽然ExcelKit针对导出做了大量优化，但导出数据也需要量力而行。  
+![](https://cdn.nlark.com/yuque/0/2019/png/243237/1550539967120-9eff43bf-d225-4268-8685-2b441f7024d5.png)
