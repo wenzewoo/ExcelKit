@@ -26,19 +26,8 @@ import com.wuwenze.poi.handler.ExcelReadHandler;
 import com.wuwenze.poi.pojo.ExcelErrorField;
 import com.wuwenze.poi.pojo.ExcelMapping;
 import com.wuwenze.poi.pojo.ExcelProperty;
-import com.wuwenze.poi.util.BeanUtil;
-import com.wuwenze.poi.util.Const;
-import com.wuwenze.poi.util.DateUtil;
-import com.wuwenze.poi.util.POIUtil;
-import com.wuwenze.poi.util.RegexUtil;
-import com.wuwenze.poi.util.ValidatorUtil;
+import com.wuwenze.poi.util.*;
 import com.wuwenze.poi.validator.Validator;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -53,6 +42,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author wuwenze
@@ -394,7 +390,8 @@ public class ExcelXlsxReader extends DefaultHandler {
 
     // options
     Options options = property.getOptions();
-    if (null != options) {
+    //如果存在选项，且字段值不为空，判断值是否在下拉框中
+    if (null != options && isNotBlank(propertyValue)) {
       Object[] values = options.get();
       if (null != values && values.length > 0) {
         boolean containInOptions = false;
@@ -471,5 +468,14 @@ public class ExcelXlsxReader extends DefaultHandler {
           .build());
     }
     return resultMap;
+  }
+
+  private boolean isBlank(Object propertyValue) {
+    return null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue)
+            || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue);
+  }
+
+  private boolean isNotBlank(Object propertyValue) {
+    return !isBlank(propertyValue);
   }
 }
