@@ -15,10 +15,13 @@
 
 package com.wuwenze.poi.util;
 
-import java.lang.reflect.InvocationTargetException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.beanutils.converters.DateConverter;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author wuwenze
@@ -28,6 +31,8 @@ public class BeanUtil extends org.apache.commons.beanutils.BeanUtils {
 
   public static void setComplexProperty(Object bean, String name, Object value)
       throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+    //修复日期为空时bug
+    ConvertUtils.register(new DateConverter(null), java.util.Date.class);
     if (!name.contains(".")) {
       BeanUtil.setProperty(bean, name, value);
       return;
