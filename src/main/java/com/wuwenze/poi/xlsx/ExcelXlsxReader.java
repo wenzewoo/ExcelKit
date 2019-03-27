@@ -31,6 +31,7 @@ import com.wuwenze.poi.validator.Validator;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -71,6 +72,9 @@ public class ExcelXlsxReader extends DefaultHandler {
   private final List<Object> mExcelRowObjectData = Lists.newArrayList();
   private Integer mBeginReadRowIndex = Const.XLSX_DEFAULT_BEGIN_READ_ROW_INDEX;
   private final Object mEmptyCellValue = Const.XLSX_DEFAULT_EMPTY_CELL_VALUE;
+
+  private final DataFormatter formatter = new DataFormatter();
+
 
   public ExcelXlsxReader(Class<? extends Object> entityClass,//
       ExcelMapping excelMapping, //
@@ -276,6 +280,10 @@ public class ExcelXlsxReader extends DefaultHandler {
       XSSFCellStyle style = mStylesTable.getStyleAt(styleIndex);
       mFormatIndex = style.getDataFormat();
       mFormatString = style.getDataFormatString();
+      if ("m/d/yy".equals(mFormatString)) {
+        mNextCellType = mNextCellType.DATE;
+        mFormatString = "yyyy-MM-dd hh:mm:ss.SSS";
+      }
       if (null == mFormatString) {
         mNextCellType = mNextCellType.NULL;
         mFormatString = BuiltinFormats.getBuiltinFormat(mFormatIndex);
@@ -284,6 +292,7 @@ public class ExcelXlsxReader extends DefaultHandler {
   }
 
   private String getCellValue(String value) {
+    String thisStr = "";
     switch (mNextCellType) {
       case BOOL:
         return value.charAt(0) == '0' ? "FALSE" : "TRUE";
@@ -295,8 +304,25 @@ public class ExcelXlsxReader extends DefaultHandler {
         return new XSSFRichTextString(value).toString();
       case STRING:
         return String.valueOf(value);
+      case NUMBER:
+        if (mFormatString != null) {
+          thisStr = formatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString).trim();
+        } else {
+          thisStr = value;
+        }
+
+        thisStr = thisStr.replace("_", "").trim();
+        break;
+      case DATE:
+        thisStr = formatter.formatRawCellContents(Double.parseDouble(value), mFormatIndex, mFormatString);
+        // 对日期字符串作特殊处理
+        thisStr = thisStr.replace(" ", "T");
+        break;
+      default:
+        thisStr = "";
+        break;
     }
-    return value;
+    return thisStr;
   }
 
   private final static String CHECK_MAP_KEY_OF_VALUE = "CELL_VALUE";
@@ -354,6 +380,10 @@ public class ExcelXlsxReader extends DefaultHandler {
   private Map<String, Object> checkAndConvertProperty(Integer cellIndex,
       ExcelProperty property,
       Object propertyValue) {
+    //如果值为$EMPTY_CELL$时，直接置为空
+    if (propertyValue != null && propertyValue.equals(Const.XLSX_DEFAULT_EMPTY_CELL_VALUE)) {
+      propertyValue = null;
+    }
     // required
     Boolean required = property.getRequired();
     if (null != required && required) {
@@ -377,7 +407,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
     // dateFormat
     String dateFormat = property.getDateFormat();
-    if (!ValidatorUtil.isEmpty(dateFormat)) {
+    if (!ValidatorUtil.isEmpty(dateFormat) && isNotBlank(propertyValue)) {
       try {
         // 时间格式转换后，直接返回。
         Date parseDateValue = DateUtil.parse(dateFormat, propertyValue);
@@ -410,7 +440,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
     // regularExp
     String regularExp = property.getRegularExp();
-    if (!ValidatorUtil.isEmpty(regularExp)) {
+    if (!ValidatorUtil.isEmpty(regularExp) && isNotBlank(propertyValue)) {
       if (!RegexUtil.isMatches(regularExp, propertyValue)) {
         String regularExpMessage = property.getRegularExpMessage();
         String validErrorMessage = !ValidatorUtil.isEmpty(regularExpMessage) ?
