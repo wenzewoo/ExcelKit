@@ -1,12 +1,12 @@
 # ExcelKit
-> 简单、好用且轻量级的海量Excel文件导入导出解决方案。<反馈问题微信：`unknow-uid`>
+> 简单、好用且轻量级的海量Excel文件导入导出解决方案。
 
 ## POM.xml
 ```xml
 <dependency>
     <groupId>com.wuwenze</groupId>
     <artifactId>ExcelKit</artifactId>
-    <version>2.0.71</version>
+    <version>2.0.72</version>
 </dependency>
 ```
 

@@ -115,7 +115,7 @@ public class ExcelXlsxReader extends DefaultHandler {
     XSSFReader xssfReader = new XSSFReader(pkg);
     mStylesTable = xssfReader.getStylesTable();
     SharedStringsTable sst = xssfReader.getSharedStringsTable();
-    XMLReader parser = fetchSheetParser(sst);
+    XMLReader parser = this.fetchSheetParser(sst);
     Iterator<InputStream> sheets = xssfReader.getSheetsData();
     while (sheets.hasNext()) {
       mCurrentRowIndex = 0;
@@ -130,7 +130,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
   public void process(String fileName, int sheetIndex) throws ExcelKitRuntimeException {
     try {
-      processBySheet(sheetIndex, OPCPackage.open(fileName));
+      this.processBySheet(sheetIndex, OPCPackage.open(fileName));
     } catch (Exception e) {
       throw new ExcelKitRuntimeException("Only .xlsx formatted files are supported.", e);
     }
@@ -138,7 +138,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
   public void process(InputStream in, int sheetIndex) throws ExcelKitRuntimeException {
     try {
-      processBySheet(sheetIndex, OPCPackage.open(in));
+      this.processBySheet(sheetIndex, OPCPackage.open(in));
     } catch (Exception e) {
       throw new ExcelKitRuntimeException("Only .xlsx formatted files are supported.", e);
     }
@@ -168,8 +168,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
   @Override
   public void startElement(
-      String uri, String localName, String name, Attributes attributes)
-      throws SAXException {
+      String uri, String localName, String name, Attributes attributes) {
     if ("sst".equals(name) || "styleSheet".equals(name)) {
       throw new ExcelKitEncounterNoNeedXmlException();
     }
@@ -185,7 +184,7 @@ public class ExcelXlsxReader extends DefaultHandler {
       String cellStyleStr = attributes.getValue(Const.SAX_S_ATTR_VALUE);
       mNextIsString = (null != cellType && cellType.equals(Const.SAX_S_ATTR_VALUE));
       // 设定单元格类型
-      setNextCellType(cellType, cellStyleStr);
+      this.setNextCellType(cellType, cellStyleStr);
     }
     mPreviousCellValue = "";
   }
@@ -204,7 +203,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
     // 处理单元格数据
     if (Const.SAX_C_ELEMENT.equals(name)) {
-      String value = getCellValue(mPreviousCellValue.trim());
+      String value = this.getCellValue(mPreviousCellValue.trim());
 
       // 空值补齐(中)
       if (!mCurrentCellRef.equals(mPreviousCellRef)) {
@@ -230,7 +229,7 @@ public class ExcelXlsxReader extends DefaultHandler {
         }
       }
       try {
-        performVerificationAndProcessFlowRow();
+        this.performVerificationAndProcessFlowRow();
       } catch (Exception e) {
         e.printStackTrace();
       } finally {
@@ -292,7 +291,7 @@ public class ExcelXlsxReader extends DefaultHandler {
   }
 
   private String getCellValue(String value) {
-    String thisStr = "";
+    String thisStr;
     switch (mNextCellType) {
       case BOOL:
         return value.charAt(0) == '0' ? "FALSE" : "TRUE";
@@ -338,13 +337,12 @@ public class ExcelXlsxReader extends DefaultHandler {
         mExcelRowObjectData.add(i, mEmptyCellValue);
       }
 
-      if (!rowObjectDataIsAllEmptyCellValue()) {
+      if (!this.rowObjectDataIsAllEmptyCellValue()) {
         Object entity = mEntityClass.newInstance();
         List<ExcelErrorField> errorFields = Lists.newArrayList();
         for (int i = 0; i < propertyList.size(); i++) {
           ExcelProperty property = propertyList.get(i);
-          Map<String, Object> checkAndConvertPropertyRetMap = checkAndConvertProperty(i, property,
-              mExcelRowObjectData.get(i));
+          Map<String, Object> checkAndConvertPropertyRetMap = this.checkAndConvertProperty(i, property, mExcelRowObjectData.get(i));
           Object errorFieldObject = checkAndConvertPropertyRetMap.get(
               ExcelXlsxReader.CHECK_MAP_KEY_OF_ERROR);
           if (null != errorFieldObject) {
@@ -380,32 +378,29 @@ public class ExcelXlsxReader extends DefaultHandler {
   private Map<String, Object> checkAndConvertProperty(Integer cellIndex,
       ExcelProperty property,
       Object propertyValue) {
-     if(null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue)
-              || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue)) {
+
+     if(null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue) || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue)) {
         // required
         Boolean required = property.getRequired();
         if (null != required && required) {
-            return this.buildCheckAndConvertPropertyRetMap(//
-                  cellIndex, property, propertyValue, "单元格的值必须填写");
+            return this.buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, "单元格的值必须填写");
         }
-        //empty cell doesn't need to check anymore
+
+        // empty cell doesn't need to check anymore
         return this.buildCheckAndConvertPropertyRetMap(cellIndex, property, null, null);
     }
 
     // maxLength
     Integer maxLength = property.getMaxLength();
     if (-1 != maxLength) {
-      if (null != propertyValue && //
-          !mEmptyCellValue.equals(propertyValue) && //
-          String.valueOf(propertyValue).length() > maxLength) {
-        return this.buildCheckAndConvertPropertyRetMap(//
-            cellIndex, property, propertyValue, "超过最大长度: " + maxLength);
+      if (String.valueOf(propertyValue).length() > maxLength) {
+        return this.buildCheckAndConvertPropertyRetMap(cellIndex, property, propertyValue, "超过最大长度: " + maxLength);
       }
     }
 
     // dateFormat
     String dateFormat = property.getDateFormat();
-    if (!ValidatorUtil.isEmpty(dateFormat) && isNotBlank(propertyValue)) {
+    if (!ValidatorUtil.isEmpty(dateFormat)) {
       try {
         // 时间格式转换后，直接返回。
         Date parseDateValue = DateUtil.parse(dateFormat, propertyValue);
@@ -418,8 +413,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
     // options
     Options options = property.getOptions();
-    //如果存在选项，且字段值不为空，判断值是否在下拉框中
-    if (null != options && isNotBlank(propertyValue)) {
+    if (null != options) {
       Object[] values = options.get();
       if (null != values && values.length > 0) {
         boolean containInOptions = false;
@@ -438,7 +432,7 @@ public class ExcelXlsxReader extends DefaultHandler {
 
     // regularExp
     String regularExp = property.getRegularExp();
-    if (!ValidatorUtil.isEmpty(regularExp) && isNotBlank(propertyValue)) {
+    if (!ValidatorUtil.isEmpty(regularExp)) {
       if (!RegexUtil.isMatches(regularExp, propertyValue)) {
         String regularExpMessage = property.getRegularExpMessage();
         String validErrorMessage = !ValidatorUtil.isEmpty(regularExpMessage) ?
@@ -496,14 +490,5 @@ public class ExcelXlsxReader extends DefaultHandler {
           .build());
     }
     return resultMap;
-  }
-
-  private boolean isBlank(Object propertyValue) {
-    return null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue)
-            || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue);
-  }
-
-  private boolean isNotBlank(Object propertyValue) {
-    return !isBlank(propertyValue);
   }
 }
