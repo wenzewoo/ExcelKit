@@ -380,18 +380,16 @@ public class ExcelXlsxReader extends DefaultHandler {
   private Map<String, Object> checkAndConvertProperty(Integer cellIndex,
       ExcelProperty property,
       Object propertyValue) {
-    //如果值为$EMPTY_CELL$时，直接置为空
-    if (propertyValue != null && propertyValue.equals(Const.XLSX_DEFAULT_EMPTY_CELL_VALUE)) {
-      propertyValue = null;
-    }
-    // required
-    Boolean required = property.getRequired();
-    if (null != required && required) {
-      if (null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue)
-          || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue)) {
-        return this.buildCheckAndConvertPropertyRetMap(//
-            cellIndex, property, propertyValue, "单元格的值必须填写");
-      }
+     if(null == propertyValue || ValidatorUtil.isEmpty((String) propertyValue)
+              || Const.XLSX_DEFAULT_EMPTY_CELL_VALUE.equals(propertyValue)) {
+        // required
+        Boolean required = property.getRequired();
+        if (null != required && required) {
+            return this.buildCheckAndConvertPropertyRetMap(//
+                  cellIndex, property, propertyValue, "单元格的值必须填写");
+        }
+        //empty cell doesn't need to check anymore
+        return this.buildCheckAndConvertPropertyRetMap(cellIndex, property, null, null);
     }
 
     // maxLength
