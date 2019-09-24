@@ -105,7 +105,7 @@ public class ExcelXlsxWriter {
         if (!ValidatorUtil.isEmpty(property.getComment())) {
           // int col1, int row1, int col2, int row2
           Comment cellComment = sxssfDrawing.createCellComment(//
-              new XSSFClientAnchor(0, 0, 0, 0, i, 0, i, 0));
+              new XSSFClientAnchor(0, 0, 0, 0, i, 0,i+2, i+2));
           XSSFRichTextString xssfRichTextString = new XSSFRichTextString(
               property.getComment());
           Font commentFormatter = workbook.createFont();
@@ -178,9 +178,9 @@ public class ExcelXlsxWriter {
       mHeaderCellStyle.setBorderBottom(BorderStyle.DOTTED);
       mHeaderCellStyle.setBorderLeft(BorderStyle.DOTTED);
       mHeaderCellStyle.setAlignment(HorizontalAlignment.LEFT);// 对齐
-      mHeaderCellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
-      mHeaderCellStyle.setFillBackgroundColor(HSSFColor.GREEN.index);
-      font.setColor(HSSFColor.WHITE.index);
+      mHeaderCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREEN.getIndex());
+      mHeaderCellStyle.setFillBackgroundColor(HSSFColor.HSSFColorPredefined.GREEN.getIndex());
+      font.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
       // 应用标题字体到标题样式
       mHeaderCellStyle.setFont(font);
       //设置单元格文本形式
