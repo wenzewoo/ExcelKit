@@ -1,6 +1,9 @@
 # ExcelKit
 > 简单、好用且轻量级的海量Excel文件导入导出解决方案。
 
+# 注意
+## 停止维护，建议使用EasyExcel：https://github.com/alibaba/easyexcel
+
 ## POM.xml
 ```xml
 <dependency>
